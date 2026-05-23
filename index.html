@@ -7,7 +7,501 @@
     <meta name="description" content="عرض مباشر لمنشورات قناة تيليغرام بتصميم عصري">
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <link rel="stylesheet" href="css/style.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            min-height: 100vh;
+            background: linear-gradient(135deg, #0d2818 0%, #0a1f15 50%, #05140e 100%);
+            font-family: 'Cairo', sans-serif;
+            color: #f0f3f8;
+            overflow-x: hidden;
+        }
+
+        html, body {
+            overflow-x: hidden !important;
+            max-width: 100% !important;
+            position: relative;
+        }
+
+        /* خلفية متحركة */
+        .bg-animation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            z-index: 0;
+        }
+
+        .bg-animation span {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            background: rgba(226, 177, 59, 0.05);
+            border-radius: 50%;
+            animation: float 15s infinite linear;
+        }
+
+        @keyframes float {
+            0% { transform: translateY(100vh) rotate(0deg); opacity: 0; }
+            50% { opacity: 0.5; }
+            100% { transform: translateY(-100vh) rotate(360deg); opacity: 0; }
+        }
+
+        /* تخطيط الصفحة */
+        .app-wrapper {
+            display: flex;
+            position: relative;
+            z-index: 2;
+            min-height: 100vh;
+            overflow-x: hidden !important;
+            max-width: 100%;
+        }
+
+        /* الشريط الجانبي الأيمن */
+        .sidebar {
+            width: 280px;
+            background: rgba(10, 28, 22, 0.95);
+            backdrop-filter: blur(20px);
+            border-left: 1px solid rgba(226, 177, 59, 0.2);
+            padding: 2rem 0;
+            position: sticky;
+            top: 0;
+            height: 100vh;
+            overflow-y: auto;
+            overflow-x: hidden;
+            transition: all 0.3s ease;
+            z-index: 10;
+        }
+
+        .sidebar-toggle {
+            display: none;
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 100;
+            background: linear-gradient(105deg, #E2B13B, #C99E32);
+            border: none;
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            color: #0a1f18;
+            font-size: 1.2rem;
+            cursor: pointer;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .sidebar-header {
+            text-align: center;
+            padding: 0 1.5rem 1.5rem;
+            border-bottom: 1px solid rgba(226, 177, 59, 0.2);
+            margin-bottom: 1.5rem;
+        }
+
+        .sidebar-header h3 {
+            color: #E2B13B;
+            font-size: 1.2rem;
+        }
+
+        .sidebar-header p {
+            font-size: 0.7rem;
+            opacity: 0.7;
+            margin-top: 5px;
+        }
+
+        .sidebar-section {
+            margin-bottom: 1.5rem;
+        }
+
+        .sidebar-section-title {
+            padding: 0.5rem 1.5rem;
+            color: #E2B13B;
+            font-size: 0.8rem;
+            font-weight: 700;
+        }
+
+        .sidebar-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 1.5rem;
+            margin: 4px 8px;
+            border-radius: 12px;
+            color: #cbdcd6;
+            cursor: pointer;
+            transition: all 0.2s;
+            white-space: nowrap;
+        }
+
+        .sidebar-item i {
+            width: 24px;
+            color: #E2B13B;
+        }
+
+        .sidebar-item:hover {
+            background: rgba(226, 177, 59, 0.1);
+            color: #FFE2A4;
+        }
+
+        .sidebar-item.active {
+            background: linear-gradient(105deg, #E2B13B, #C99E32);
+            color: #0a1f18;
+        }
+
+        .sidebar-item.active i {
+            color: #0a1f18;
+        }
+
+        /* المحتوى الرئيسي */
+        .main-content {
+            flex: 1;
+            padding: 2rem 2rem;
+            overflow-x: hidden !important;
+            max-width: 100%;
+        }
+
+        /* الهيدر */
+        .hero-section {
+            text-align: center;
+            margin-bottom: 2rem;
+            overflow-x: hidden;
+        }
+
+        .hero-section h1 {
+            font-size: 2.5rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #FFE6B0, #E2B13B, #C7922E);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .hero-section h1 i {
+            color: #E2B13B;
+            font-size: 2rem;
+            background: none;
+        }
+
+        .glow-text {
+            font-size: 0.85rem;
+            opacity: 0.8;
+            margin-top: 5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .badge-msd {
+            background: rgba(226, 177, 59, 0.15);
+            padding: 4px 12px;
+            border-radius: 50px;
+            font-size: 0.7rem;
+        }
+
+        /* شريط المصادر */
+        .source-bar {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .source-btn {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(226, 177, 59, 0.3);
+            padding: 8px 20px;
+            border-radius: 50px;
+            color: #E2B13B;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .source-btn.active {
+            background: linear-gradient(105deg, #E2B13B, #C99E32);
+            color: #0a1f18;
+            border-color: transparent;
+        }
+
+        /* بطاقة الحالة */
+        .status-card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(20px);
+            border-radius: 70px;
+            padding: 10px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+            gap: 12px;
+            border: 1px solid rgba(226, 177, 59, 0.2);
+        }
+
+        .status-left {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 0.9rem;
+        }
+
+        .refresh-btn {
+            background: linear-gradient(105deg, #E2B13B, #C99E32);
+            border: none;
+            padding: 8px 24px;
+            border-radius: 60px;
+            font-weight: 700;
+            font-size: 0.85rem;
+            color: #0a1f18;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.2s;
+        }
+
+        .refresh-btn:hover {
+            transform: scale(0.98);
+            opacity: 0.9;
+        }
+
+        /* شبكة المنشورات */
+        .posts-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 1.5rem;
+            margin-top: 0.5rem;
+        }
+
+        .post-card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border-radius: 24px;
+            padding: 1.2rem;
+            transition: all 0.3s;
+            border: 1px solid rgba(226, 177, 59, 0.15);
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+        }
+
+        .post-card:hover {
+            transform: translateY(-5px);
+            border-color: #E2B13B;
+        }
+
+        .post-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 12px;
+            flex-wrap: wrap;
+        }
+
+        .telegram-icon {
+            background: rgba(226, 177, 59, 0.15);
+            width: 40px;
+            height: 40px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            color: #E2B13B;
+        }
+
+        .post-meta {
+            flex: 1;
+        }
+
+        .channel-name {
+            font-weight: 700;
+            color: #FFE2A4;
+            font-size: 0.85rem;
+        }
+
+        .post-date {
+            font-size: 0.65rem;
+            color: #a0bba8;
+        }
+
+        .msg-id {
+            background: rgba(226, 177, 59, 0.12);
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 0.65rem;
+            color: #E2B13B;
+        }
+
+        .post-message {
+            color: #cbdcd6;
+            line-height: 1.6;
+            font-size: 0.9rem;
+            white-space: pre-wrap;
+            word-break: break-word;
+            margin-bottom: 10px;
+        }
+
+        .post-message a {
+            color: #E2B13B;
+            text-decoration: none;
+        }
+
+        .post-message a:hover {
+            text-decoration: underline;
+        }
+
+        .post-image {
+            margin-top: 10px;
+            border-radius: 16px;
+            overflow: hidden;
+            text-align: center;
+        }
+
+        .post-image img {
+            max-width: 100%;
+            max-height: 250px;
+            object-fit: cover;
+            border-radius: 16px;
+            cursor: pointer;
+            transition: 0.2s;
+            border: 1px solid rgba(226, 177, 59, 0.2);
+        }
+
+        .post-image img:hover {
+            transform: scale(1.01);
+            border-color: #E2B13B;
+        }
+
+        .media-tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: rgba(226, 177, 59, 0.1);
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.65rem;
+            color: #E2B13B;
+            margin-top: 8px;
+        }
+
+        /* حالة فارغة */
+        .empty-state {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(12px);
+            border-radius: 40px;
+            padding: 2rem;
+            text-align: center;
+            word-wrap: break-word;
+        }
+
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid rgba(226, 177, 59, 0.2);
+            border-top: 3px solid #E2B13B;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            margin: 1rem auto;
+        }
+
+        @keyframes spin {
+            100% { transform: rotate(360deg); }
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 2rem;
+            padding-top: 1rem;
+            font-size: 0.7rem;
+            opacity: 0.6;
+            border-top: 1px solid rgba(226, 177, 59, 0.1);
+        }
+
+        /* شريط التمرير */
+        ::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #0f231d;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #E2B13B;
+            border-radius: 10px;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .sidebar {
+                position: fixed;
+                right: -280px;
+                width: 260px;
+                z-index: 200;
+                transition: right 0.3s ease;
+                height: 100vh;
+            }
+
+            .sidebar.open {
+                right: 0;
+            }
+
+            .sidebar-toggle {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+
+            .main-content {
+                padding: 1rem;
+            }
+
+            .hero-section h1 {
+                font-size: 1.8rem;
+            }
+
+            .posts-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .status-card {
+                border-radius: 30px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .hero-section h1 {
+                font-size: 1.5rem;
+            }
+
+            .glow-text {
+                flex-direction: column;
+                gap: 5px;
+            }
+
+            .source-bar .source-btn {
+                padding: 6px 14px;
+                font-size: 0.75rem;
+            }
+        }
+    </style>
 </head>
 <body>
 <div class="bg-animation" id="bgAnimation"></div>
@@ -44,11 +538,11 @@
         </div>
         <div class="sidebar-section">
             <div class="sidebar-section-title"><i class="fas fa-cog"></i> إعدادات العرض</div>
+            <div class="sidebar-item active" data-view="media">
+                <i class="fas fa-image"></i> <span>مع الصور</span>
+            </div>
             <div class="sidebar-item" data-view="text">
                 <i class="fas fa-paragraph"></i> <span>نص فقط</span>
-            </div>
-            <div class="sidebar-item" data-view="media">
-                <i class="fas fa-image"></i> <span>مع الصور</span>
             </div>
         </div>
         <div class="sidebar-section">
@@ -101,6 +595,230 @@
     </div>
 </div>
 
-<script src="js/app.js"></script>
+<script>
+    // بيانات التوكن والمعرف
+    const BOT_TOKEN = "8901733084:AAH9icgp3Q7krjOomq0jiVU5VQh0zcPkY_g";
+    const CHAT_ID = "-1003712252984";
+    
+    let showImages = true; // عرض الصور افتراضياً
+    
+    // إنشاء الخلفية المتحركة
+    function createAnimatedBackground() {
+        const bgContainer = document.getElementById('bgAnimation');
+        if (!bgContainer) return;
+        
+        for (let i = 0; i < 50; i++) {
+            let span = document.createElement('span');
+            let size = Math.random() * 30 + 5;
+            span.style.width = size + 'px';
+            span.style.height = size + 'px';
+            span.style.left = Math.random() * 100 + '%';
+            span.style.animationDuration = Math.random() * 20 + 10 + 's';
+            span.style.animationDelay = Math.random() * 10 + 's';
+            bgContainer.appendChild(span);
+        }
+    }
+    
+    // عناصر التحكم
+    const sidebar = document.getElementById('sidebar');
+    const sidebarToggle = document.getElementById('sidebarToggle');
+    const refreshBtn = document.getElementById('refreshButton');
+    const statusSpan = document.getElementById('statusMessage');
+    const postsContainer = document.getElementById('postsContainer');
+    
+    // فتح/غلق الشريط الجانبي على الموبايل
+    function initSidebarToggle() {
+        if (sidebarToggle) {
+            sidebarToggle.addEventListener('click', () => {
+                sidebar.classList.toggle('open');
+            });
+        }
+        
+        document.addEventListener('click', (e) => {
+            if (window.innerWidth <= 768 && sidebar && !sidebar.contains(e.target) && !sidebarToggle.contains(e.target)) {
+                sidebar.classList.remove('open');
+            }
+        });
+    }
+    
+    // التحكم في عرض الصور من الشريط الجانبي
+    function initViewControls() {
+        document.querySelectorAll('.sidebar-item[data-view]').forEach(item => {
+            item.addEventListener('click', () => {
+                document.querySelectorAll('.sidebar-item[data-view]').forEach(i => i.classList.remove('active'));
+                item.classList.add('active');
+                const view = item.getAttribute('data-view');
+                showImages = (view === 'media');
+                fetchChannelPosts();
+            });
+        });
+    }
+    
+    // جلب المنشورات من تيليغرام
+    async function fetchChannelPosts() {
+        if (statusSpan) {
+            statusSpan.innerHTML = '<i class="fas fa-spinner fa-pulse"></i> جلب البيانات...';
+        }
+        
+        if (postsContainer) {
+            postsContainer.innerHTML = `<div class="empty-state"><div class="spinner"></div><p>جاري تحميل المنشورات...</p></div>`;
+        }
+        
+        try {
+            const url = `https://api.telegram.org/bot${BOT_TOKEN}/getUpdates?limit=50`;
+            const response = await fetch(url);
+            const data = await response.json();
+            
+            if (!data.ok) {
+                throw new Error(data.description || "خطأ في الاتصال");
+            }
+            
+            const updates = data.result;
+            if (!updates || updates.length === 0) {
+                if (postsContainer) {
+                    postsContainer.innerHTML = `<div class="empty-state">
+                        <i class="fas fa-inbox" style="font-size: 2rem; color: #E2B13B;"></i>
+                        <p style="margin-top: 10px;">لا توجد منشورات بعد.<br>أنشر في قناتك ثم اضغط تحديث</p>
+                    </div>`;
+                }
+                if (statusSpan) {
+                    statusSpan.innerHTML = '✅ متصل · لا توجد منشورات';
+                }
+                return;
+            }
+            
+            let posts = [];
+            for (let update of updates) {
+                let msg = update.channel_post || update.message;
+                if (msg && msg.chat) {
+                    let text = msg.text || msg.caption || "";
+                    let photoFileId = null;
+                    let hasPhoto = false;
+                    
+                    if (msg.photo && msg.photo.length > 0) {
+                        hasPhoto = true;
+                        photoFileId = msg.photo[msg.photo.length - 1].file_id;
+                    }
+                    
+                    // تحويل الروابط إلى عناصر قابلة للنقر
+                    if (text) {
+                        text = text.replace(/(https?:\/\/[^\s]+)/g, '<a href="$1" target="_blank">$1</a>');
+                    }
+                    
+                    posts.push({
+                        text: text || (hasPhoto ? "📷 صورة" : "(بدون محتوى نصي)"),
+                        date: msg.date,
+                        message_id: msg.message_id,
+                        hasPhoto: hasPhoto,
+                        photoFileId: photoFileId,
+                        hasMedia: !!(msg.photo || msg.video || msg.document)
+                    });
+                }
+            }
+            
+            posts.sort((a, b) => b.date - a.date);
+            const recentPosts = posts.slice(0, 15);
+            
+            if (recentPosts.length === 0) {
+                if (postsContainer) {
+                    postsContainer.innerHTML = `<div class="empty-state"><i class="fas fa-comment-slash"></i><p>لا توجد رسائل نصية في القناة</p></div>`;
+                }
+                if (statusSpan) {
+                    statusSpan.innerHTML = '📭 لا توجد منشورات نصية';
+                }
+                return;
+            }
+            
+            await renderPosts(recentPosts);
+            if (statusSpan) {
+                statusSpan.innerHTML = `<i class="fas fa-crown" style="color:#E2B13B"></i> تم جلب ${recentPosts.length} منشور`;
+            }
+        } catch (error) {
+            console.error(error);
+            if (postsContainer) {
+                postsContainer.innerHTML = `<div class="empty-state">
+                    <i class="fas fa-exclamation-triangle" style="font-size: 2rem; color: #E2B13B;"></i>
+                    <p>خطأ: ${error.message}<br><span style="font-size: 0.75rem;">تأكد من التوكن وصلاحيات البوت</span></p>
+                </div>`;
+            }
+            if (statusSpan) {
+                statusSpan.innerHTML = '❌ فشل الاتصال';
+            }
+        }
+    }
+    
+    // عرض المنشورات
+    async function renderPosts(posts) {
+        if (!postsContainer) return;
+        
+        postsContainer.innerHTML = '';
+        const grid = document.createElement('div');
+        grid.className = 'posts-grid';
+        
+        for (let post of posts) {
+            const card = document.createElement('div');
+            card.className = 'post-card';
+            
+            const postDate = new Date(post.date * 1000);
+            const formattedDate = postDate.toLocaleString('ar-EG', {
+                year: 'numeric', month: 'numeric', day: 'numeric',
+                hour: '2-digit', minute: '2-digit'
+            });
+            
+            let imageHtml = '';
+            if (showImages && post.hasPhoto && post.photoFileId) {
+                try {
+                    const fileInfoUrl = `https://api.telegram.org/bot${BOT_TOKEN}/getFile?file_id=${post.photoFileId}`;
+                    const fileRes = await fetch(fileInfoUrl);
+                    const fileData = await fileRes.json();
+                    if (fileData.ok && fileData.result.file_path) {
+                        const directImageUrl = `https://api.telegram.org/file/bot${BOT_TOKEN}/${fileData.result.file_path}`;
+                        imageHtml = `<div class="post-image"><img src="${directImageUrl}" alt="صورة من القناة" loading="lazy" onclick="window.open('${directImageUrl}','_blank')"></div>`;
+                    } else {
+                        imageHtml = `<div class="media-tag"><i class="fas fa-image"></i> صورة (تعذر التحميل)</div>`;
+                    }
+                } catch(e) {
+                    imageHtml = `<div class="media-tag"><i class="fas fa-image"></i> صورة غير متاحة</div>`;
+                }
+            } else if (showImages && post.hasMedia && !post.hasPhoto) {
+                imageHtml = `<div class="media-tag"><i class="fas fa-paperclip"></i> مرفق (فيديو/مستند)</div>`;
+            }
+            
+            card.innerHTML = `
+                <div class="post-header">
+                    <div class="telegram-icon"><i class="fab fa-telegram-plane"></i></div>
+                    <div class="post-meta">
+                        <div class="channel-name"><i class="fas fa-crown"></i> القناة الذهبية</div>
+                        <div class="post-date">${formattedDate}</div>
+                    </div>
+                    <div class="msg-id"><i class="fas fa-hashtag"></i> ${post.message_id}</div>
+                </div>
+                <div class="post-message">${post.text}</div>
+                ${imageHtml}
+            `;
+            grid.appendChild(card);
+        }
+        
+        postsContainer.appendChild(grid);
+    }
+    
+    // تهيئة حدث التحديث
+    function initRefreshButton() {
+        if (refreshBtn) {
+            refreshBtn.addEventListener('click', () => {
+                fetchChannelPosts();
+            });
+        }
+    }
+    
+    // تهيئة جميع الوظائف عند تحميل الصفحة
+    document.addEventListener('DOMContentLoaded', () => {
+        createAnimatedBackground();
+        initSidebarToggle();
+        initViewControls();
+        initRefreshButton();
+        fetchChannelPosts();
+    });
+</script>
 </body>
 </html>
