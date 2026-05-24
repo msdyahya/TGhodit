@@ -1,0 +1,2399 @@
+<!DOCTYPE html>
+<html dir="rtl" lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=yes">
+    <title>TGhodit | منصة تواصل اجتماعي فاخرة</title>
+    <meta name="description" content="TGhodit - منصة تواصل اجتماعي عصرية متكاملة">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+        html {
+            font-size: 16px;
+            scroll-behavior: smooth;
+        }
+        body {
+            font-family: 'Cairo', 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #e0eafc 0%, #cfdef3 100%);
+            color: #1e293b;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+        ::-webkit-scrollbar {
+            width: 5px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #cbd5e1;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #6366f1;
+            border-radius: 10px;
+        }
+        :root {
+            --gold: #6366f1;
+            --gold-dark: #4f46e5;
+            --gold-light: #818cf8;
+            --info: #0ea5e9;
+            --admin: #ef4444;
+            --user: #10b981;
+            --msd: #f59e0b;
+            --trend: #ec4899;
+            --bg-card: #ffffff;
+            --bg-card-hover: #f8fafc;
+            --text-primary: #1e293b;
+            --text-secondary: #64748b;
+            --border: #e2e8f0;
+            --shadow-sm: 0 2px 8px rgba(0,0,0,0.05);
+            --shadow-md: 0 4px 20px rgba(0,0,0,0.08);
+            --shadow-lg: 0 8px 30px rgba(0,0,0,0.12);
+            --transition: all 0.2s ease;
+            --border-radius-card: 1.5rem;
+            --border-radius-btn: 2rem;
+            --border-radius-img: 20px;
+            --border-radius-img-lg: 28px;
+        }
+        .bg-animation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            z-index: 0;
+            pointer-events: none;
+        }
+        .bg-animation span {
+            position: absolute;
+            background: rgba(99,102,241,0.05);
+            border-radius: 50%;
+            animation: floatBg 20s infinite linear;
+        }
+        @keyframes floatBg {
+            0% { transform: translateY(100vh) rotate(0deg); opacity: 0; }
+            10% { opacity: 0.4; }
+            90% { opacity: 0.4; }
+            100% { transform: translateY(-20vh) rotate(360deg); opacity: 0; }
+        }
+        .app-wrapper {
+            display: flex;
+            position: relative;
+            z-index: 2;
+            min-height: 100vh;
+        }
+        .sidebar-banner {
+            width: 280px;
+            background: rgba(255,255,255,0.95);
+            backdrop-filter: blur(16px);
+            border-left: 1px solid rgba(99,102,241,0.15);
+            padding: 1.5rem 0;
+            position: fixed;
+            right: 0;
+            top: 0;
+            height: 100vh;
+            overflow-y: auto;
+            transition: var(--transition);
+            z-index: 50;
+            box-shadow: -5px 0 30px rgba(0,0,0,0.05);
+        }
+        .sidebar-banner.hidden {
+            right: -280px;
+        }
+        .sidebar-banner::-webkit-scrollbar {
+            width: 3px;
+        }
+        .hide-banner-btn {
+            background: rgba(99,102,241,0.08);
+            border: 1px solid rgba(99,102,241,0.15);
+            padding: 0.7rem;
+            margin: 0.5rem 1.2rem;
+            border-radius: var(--border-radius-btn);
+            color: var(--text-secondary);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.6rem;
+            font-size: 0.8rem;
+            transition: var(--transition);
+            width: calc(100% - 2.4rem);
+        }
+        .hide-banner-btn:hover {
+            background: rgba(99,102,241,0.15);
+            border-color: var(--gold);
+            color: var(--gold);
+        }
+        .show-banner-fab {
+            position: fixed;
+            right: 1rem;
+            top: 1rem;
+            width: 2.8rem;
+            height: 2.8rem;
+            background: linear-gradient(135deg, var(--gold), var(--gold-dark));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            z-index: 60;
+            box-shadow: var(--shadow-md);
+            transition: var(--transition);
+            opacity: 0;
+            visibility: hidden;
+            transform: scale(0.8);
+            border: none;
+        }
+        .show-banner-fab.visible {
+            opacity: 1;
+            visibility: visible;
+            transform: scale(1);
+        }
+        .show-banner-fab:hover {
+            transform: scale(1.05);
+            background: linear-gradient(135deg, var(--gold-light), var(--gold));
+        }
+        .show-banner-fab i {
+            font-size: 1.2rem;
+            color: white;
+        }
+        .banner-header {
+            text-align: center;
+            padding: 0 1.5rem 1.5rem;
+            border-bottom: 2px solid var(--gold);
+            margin-bottom: 1.5rem;
+        }
+        .banner-header h3 {
+            font-size: 1.4rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #1e293b, var(--gold));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        .banner-header p {
+            font-size: 0.7rem;
+            color: var(--text-secondary);
+            margin-top: 0.3rem;
+        }
+        .banner-nav {
+            margin-top: 1.5rem;
+        }
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            padding: 0.75rem 1.5rem;
+            margin: 0.3rem 0.8rem;
+            border-radius: 0.9rem;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: var(--transition);
+            font-weight: 500;
+            font-size: 0.95rem;
+        }
+        .nav-item i {
+            width: 1.5rem;
+            font-size: 1.1rem;
+        }
+        .nav-item:hover {
+            background: rgba(99,102,241,0.08);
+            color: var(--gold);
+            transform: translateX(-4px);
+        }
+        .nav-item.active {
+            background: linear-gradient(95deg, var(--gold), var(--gold-dark));
+            color: white;
+            box-shadow: var(--shadow-sm);
+        }
+        .nav-item.active i {
+            color: white;
+        }
+        .main-content {
+            flex: 1;
+            margin-right: 280px;
+            padding: 2rem;
+            min-height: 100vh;
+            transition: var(--transition);
+        }
+        .main-content.expanded {
+            margin-right: 0;
+        }
+        .content-container {
+            max-width: 900px;
+            width: 100%;
+            margin: 0 auto;
+        }
+        .hero-section {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        .hero-section h1 {
+            font-size: clamp(1.6rem,5vw,2.2rem);
+            font-weight: 800;
+            background: linear-gradient(135deg, #1e293b, var(--gold), var(--gold-light));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.6rem;
+        }
+        .hero-section h1 i {
+            background: none;
+            color: var(--gold);
+        }
+        .glow-text {
+            display: flex;
+            justify-content: center;
+            gap: 0.6rem;
+            flex-wrap: wrap;
+            margin-top: 0.8rem;
+        }
+        .badge {
+            background: rgba(99,102,241,0.1);
+            padding: 0.4rem 1.2rem;
+            border-radius: 2rem;
+            font-size: 0.7rem;
+            font-weight: 500;
+            border: 1px solid rgba(99,102,241,0.2);
+        }
+        .page {
+            display: none;
+            animation: fadeInPage 0.3s ease;
+        }
+        .page.active {
+            display: block;
+        }
+        @keyframes fadeInPage {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .search-bar {
+            background: var(--bg-card);
+            border-radius: 3rem;
+            display: flex;
+            align-items: center;
+            padding: 0.3rem 1.2rem;
+            margin-bottom: 1.5rem;
+            border: 1px solid var(--border);
+            transition: var(--transition);
+        }
+        .search-bar:focus-within {
+            border-color: var(--gold);
+            box-shadow: 0 0 0 3px rgba(99,102,241,0.1);
+        }
+        .search-bar input {
+            flex: 1;
+            background: transparent;
+            border: none;
+            padding: 0.8rem;
+            color: var(--text-primary);
+            outline: none;
+            font-family: 'Cairo', sans-serif;
+        }
+        .status-card {
+            background: var(--bg-card);
+            border-radius: 3rem;
+            padding: 0.6rem 1.2rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 2rem;
+            border: 1px solid var(--border);
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+        .status-info {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.85rem;
+        }
+        .refresh-btn {
+            background: linear-gradient(135deg, var(--gold), var(--gold-dark));
+            border: none;
+            padding: 0.5rem 1.5rem;
+            border-radius: 2rem;
+            font-weight: 700;
+            font-size: 0.8rem;
+            color: white;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: var(--transition);
+        }
+        .refresh-btn:hover {
+            transform: scale(1.02);
+            box-shadow: 0 4px 12px rgba(99,102,241,0.3);
+        }
+        .posts-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 1.2rem;
+        }
+        .post-card {
+            background: var(--bg-card);
+            border-radius: var(--border-radius-card);
+            padding: 1.2rem;
+            transition: var(--transition);
+            border: 1px solid var(--border);
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+        .post-card:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-lg);
+        }
+        .post-card.special-info {
+            border-right: 4px solid var(--info);
+            background: linear-gradient(135deg, #fff, #f0f9ff);
+        }
+        .post-card.special-admin {
+            border-right: 4px solid var(--admin);
+            background: linear-gradient(135deg, #fff, #fef2f2);
+        }
+        .post-card.special-user {
+            border-right: 4px solid var(--user);
+            background: linear-gradient(135deg, #fff, #ecfdf5);
+        }
+        .post-card.special-msd {
+            border-right: 4px solid var(--msd);
+            background: linear-gradient(135deg, #fff, #fffbeb);
+        }
+        .post-card.special-trend {
+            border-right: 4px solid var(--trend);
+            background: linear-gradient(135deg, #fff, #fdf2f8);
+        }
+        .special-badge {
+            position: absolute;
+            top: 0.8rem;
+            left: 0.8rem;
+            padding: 0.2rem 0.8rem;
+            border-radius: 2rem;
+            font-size: 0.6rem;
+            font-weight: bold;
+            color: white;
+            z-index: 1;
+        }
+        .special-badge.info { background: var(--info); }
+        .special-badge.admin { background: var(--admin); }
+        .special-badge.user { background: var(--user); }
+        .special-badge.msd { background: var(--msd); }
+        .special-badge.trend { background: var(--trend); }
+        .post-header {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            margin-bottom: 0.8rem;
+        }
+        .avatar {
+            width: 3rem;
+            height: 3rem;
+            background: linear-gradient(135deg, var(--gold), var(--gold-dark));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            color: white;
+            flex-shrink: 0;
+        }
+        .post-info {
+            flex: 1;
+        }
+        .post-author {
+            font-weight: 700;
+            color: var(--gold);
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            flex-wrap: wrap;
+            font-size: 0.9rem;
+        }
+        .admin-badge {
+            background: rgba(99,102,241,0.1);
+            padding: 0.15rem 0.6rem;
+            border-radius: 1rem;
+            font-size: 0.55rem;
+        }
+        .post-time {
+            font-size: 0.6rem;
+            color: var(--text-secondary);
+        }
+        .post-content {
+            margin-bottom: 0.8rem;
+        }
+        .post-text {
+            line-height: 1.65;
+            font-size: 0.9rem;
+            color: var(--text-primary);
+            word-break: break-word;
+        }
+        .read-more-btn {
+            background: none;
+            border: none;
+            color: var(--gold);
+            font-size: 0.75rem;
+            cursor: pointer;
+            margin-top: 0.5rem;
+            padding: 0.25rem 0.8rem;
+            border-radius: 1.5rem;
+            transition: var(--transition);
+        }
+        .read-more-btn:hover {
+            background: rgba(99,102,241,0.1);
+        }
+        .post-image {
+            margin-top: 0.8rem;
+            border-radius: var(--border-radius-img);
+            overflow: hidden;
+            max-width: 100%;
+            position: relative;
+            background: #f1f5f9;
+            box-shadow: var(--shadow-sm);
+        }
+        .post-image img {
+            width: 100%;
+            max-height: 350px;
+            object-fit: cover;
+            border-radius: var(--border-radius-img);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: block;
+        }
+        .post-image img:hover {
+            transform: scale(1.02);
+            box-shadow: var(--shadow-md);
+        }
+        .post-actions {
+            display: flex;
+            gap: 1.5rem;
+            margin-top: 0.8rem;
+            padding-top: 0.8rem;
+            border-top: 1px solid var(--border);
+        }
+        .action-btn {
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.75rem;
+            padding: 0.4rem 0.8rem;
+            border-radius: 2rem;
+            transition: var(--transition);
+        }
+        .action-btn:hover {
+            background: rgba(99,102,241,0.1);
+            color: var(--gold);
+        }
+        .action-btn.liked {
+            color: #ef4444;
+        }
+        .action-btn.saved {
+            color: var(--gold);
+        }
+        .chat-container {
+            background: var(--bg-card);
+            border-radius: var(--border-radius-card);
+            border: 1px solid var(--border);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            height: 70vh;
+        }
+        .chat-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.8rem 1rem;
+            background: var(--bg-card);
+            border-bottom: 1px solid var(--border);
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+        .chat-header button {
+            background: rgba(99,102,241,0.1);
+            border: none;
+            padding: 0.3rem 0.8rem;
+            border-radius: 2rem;
+            font-size: 0.7rem;
+            color: var(--gold);
+            cursor: pointer;
+            transition: var(--transition);
+        }
+        .chat-header button:hover {
+            background: rgba(99,102,241,0.2);
+        }
+        .chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 1rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.8rem;
+            background: #f8fafc;
+        }
+        .chat-message {
+            display: flex;
+            flex-direction: column;
+            max-width: 80%;
+            padding: 0.6rem 1rem;
+            border-radius: 1rem;
+            position: relative;
+            animation: fadeInMsg 0.2s ease;
+        }
+        @keyframes fadeInMsg {
+            from { opacity: 0; transform: translateY(5px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .chat-message.sent {
+            align-self: flex-end;
+            background: linear-gradient(135deg, var(--gold), var(--gold-dark));
+            color: white;
+            border-bottom-left-radius: 0.25rem;
+        }
+        .chat-message.received {
+            align-self: flex-start;
+            background: white;
+            color: var(--text-primary);
+            border-bottom-right-radius: 0.25rem;
+            box-shadow: var(--shadow-sm);
+        }
+        .chat-message .message-text {
+            font-size: 0.85rem;
+            word-break: break-word;
+        }
+        .chat-message .message-time {
+            font-size: 0.6rem;
+            opacity: 0.7;
+            margin-top: 0.3rem;
+        }
+        .chat-message.sent .message-time {
+            text-align: left;
+        }
+        .chat-message.received .message-time {
+            text-align: right;
+        }
+        .chat-message-actions {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 0.3rem;
+            justify-content: flex-end;
+        }
+        .delete-message-btn {
+            background: none;
+            border: none;
+            color: #ef4444;
+            font-size: 0.6rem;
+            cursor: pointer;
+            padding: 0.2rem 0.4rem;
+            border-radius: 1rem;
+            transition: var(--transition);
+            opacity: 0.6;
+        }
+        .delete-message-btn:hover {
+            opacity: 1;
+            background: rgba(239,68,68,0.1);
+        }
+        .mention-btn {
+            background: none;
+            border: none;
+            color: var(--gold);
+            font-size: 0.6rem;
+            cursor: pointer;
+            padding: 0.2rem 0.4rem;
+            border-radius: 1rem;
+            transition: var(--transition);
+            opacity: 0.6;
+            margin-left: 0.3rem;
+        }
+        .mention-btn:hover {
+            opacity: 1;
+            background: rgba(99,102,241,0.1);
+        }
+        .chat-input-area {
+            display: flex;
+            gap: 0.5rem;
+            padding: 1rem;
+            border-top: 1px solid var(--border);
+            background: var(--bg-card);
+        }
+        .chat-input-area input {
+            flex: 1;
+            padding: 0.8rem 1rem;
+            border: 1px solid var(--border);
+            border-radius: 2rem;
+            background: #f8fafc;
+            font-family: 'Cairo', sans-serif;
+            outline: none;
+            transition: var(--transition);
+        }
+        .chat-input-area input:focus {
+            border-color: var(--gold);
+            box-shadow: 0 0 0 3px rgba(99,102,241,0.1);
+        }
+        .chat-input-area button {
+            background: linear-gradient(135deg, var(--gold), var(--gold-dark));
+            border: none;
+            padding: 0.8rem 1.2rem;
+            border-radius: 2rem;
+            color: white;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+        .chat-input-area button:hover {
+            transform: scale(1.02);
+        }
+        .chat-username {
+            font-size: 0.7rem;
+            margin-bottom: 0.2rem;
+            font-weight: bold;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .chat-message.received .chat-username {
+            color: var(--gold);
+        }
+        .chat-loading {
+            text-align: center;
+            padding: 1rem;
+            color: var(--text-secondary);
+            font-size: 0.8rem;
+        }
+        .create-post-page {
+            background: var(--bg-card);
+            border-radius: var(--border-radius-card);
+            padding: 1.8rem;
+            border: 1px solid var(--border);
+        }
+        .create-form {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+        .create-post-page input,
+        .create-post-page textarea {
+            background: #f8fafc;
+            border: 1px solid var(--border);
+            border-radius: 1.2rem;
+            padding: 0.9rem 1.2rem;
+            color: var(--text-primary);
+            font-size: 0.9rem;
+            outline: none;
+            transition: var(--transition);
+            font-family: 'Cairo', sans-serif;
+        }
+        .create-post-page input:focus,
+        .create-post-page textarea:focus {
+            border-color: var(--gold);
+            box-shadow: 0 0 0 3px rgba(99,102,241,0.1);
+        }
+        .create-post-page textarea {
+            min-height: 150px;
+            resize: vertical;
+        }
+        .image-upload-area {
+            border: 2px dashed var(--border);
+            border-radius: 1.2rem;
+            padding: 1rem;
+            text-align: center;
+            cursor: pointer;
+            transition: var(--transition);
+            background: #f8fafc;
+        }
+        .image-upload-area:hover {
+            border-color: var(--gold);
+            background: rgba(99,102,241,0.05);
+        }
+        .image-upload-area.dragover {
+            border-color: var(--gold);
+            background: rgba(99,102,241,0.1);
+        }
+        .image-preview {
+            margin-top: 1rem;
+            position: relative;
+            display: inline-block;
+            border-radius: var(--border-radius-img);
+            overflow: hidden;
+            box-shadow: var(--shadow-sm);
+        }
+        .image-preview img {
+            max-width: 100%;
+            max-height: 200px;
+            border-radius: var(--border-radius-img);
+            object-fit: cover;
+            display: block;
+        }
+        .remove-image-btn {
+            position: absolute;
+            top: -10px;
+            right: -10px;
+            background: #ef4444;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 28px;
+            height: 28px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+            transition: var(--transition);
+            z-index: 10;
+        }
+        .remove-image-btn:hover {
+            transform: scale(1.1);
+            background: #dc2626;
+        }
+        .post-modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.85);
+            backdrop-filter: blur(8px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            visibility: hidden;
+            transition: 0.25s ease;
+            z-index: 1000;
+        }
+        .post-modal-overlay.open {
+            opacity: 1;
+            visibility: visible;
+        }
+        .post-modal-content {
+            background: var(--bg-card);
+            border-radius: var(--border-radius-card);
+            max-width: 650px;
+            width: 90%;
+            max-height: 85vh;
+            overflow-y: auto;
+            padding: 1.5rem;
+            border: 1px solid var(--gold);
+            position: relative;
+        }
+        .post-modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid var(--border);
+        }
+        .post-modal-close {
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+        .post-modal-close:hover {
+            color: var(--gold);
+            transform: rotate(90deg);
+        }
+        .post-modal-body {
+            margin-bottom: 1rem;
+        }
+        .post-modal-text {
+            line-height: 1.8;
+            font-size: 1rem;
+            color: var(--text-primary);
+        }
+        .post-modal-image {
+            margin-top: 1rem;
+            border-radius: var(--border-radius-img-lg);
+            overflow: hidden;
+            text-align: center;
+        }
+        .post-modal-image img {
+            max-width: 100%;
+            max-height: 400px;
+            border-radius: var(--border-radius-img-lg);
+            object-fit: contain;
+        }
+        .post-modal-actions {
+            display: flex;
+            gap: 1.5rem;
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid var(--border);
+        }
+        .post-modal-action-btn {
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.85rem;
+            padding: 0.5rem 1rem;
+            border-radius: 2rem;
+            transition: var(--transition);
+        }
+        .post-modal-action-btn:hover {
+            background: rgba(99,102,241,0.1);
+            color: var(--gold);
+        }
+        .post-modal-action-btn.liked {
+            color: #ef4444;
+        }
+        .post-modal-action-btn.saved {
+            color: var(--gold);
+        }
+        .admin-tag {
+            background: var(--admin);
+            color: white;
+            font-size: 0.55rem;
+            padding: 0.1rem 0.4rem;
+            border-radius: 1rem;
+            margin-right: 0.5rem;
+        }
+        .contact-card,
+        .about-card,
+        .settings-card,
+        .privacy-card {
+            background: var(--bg-card);
+            border-radius: var(--border-radius-card);
+            padding: 1.8rem;
+            border: 1px solid var(--border);
+        }
+        .contact-form {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+        .contact-card input,
+        .contact-card textarea {
+            background: #f8fafc;
+            border: 1px solid var(--border);
+            border-radius: 1.2rem;
+            padding: 0.9rem 1.2rem;
+            color: var(--text-primary);
+            font-size: 0.9rem;
+            outline: none;
+            transition: var(--transition);
+            font-family: 'Cairo', sans-serif;
+        }
+        .contact-card input:focus,
+        .contact-card textarea:focus {
+            border-color: var(--gold);
+            box-shadow: 0 0 0 3px rgba(99,102,241,0.1);
+        }
+        .contact-card textarea {
+            min-height: 150px;
+            resize: vertical;
+        }
+        .submit-btn {
+            background: linear-gradient(135deg, var(--gold), var(--gold-dark));
+            border: none;
+            padding: 0.8rem;
+            border-radius: 2rem;
+            font-weight: 700;
+            font-size: 0.9rem;
+            color: white;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.6rem;
+            transition: var(--transition);
+        }
+        .submit-btn:hover {
+            transform: scale(1.02);
+            box-shadow: 0 4px 12px rgba(99,102,241,0.3);
+        }
+        .submit-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+        .clear-storage-btn {
+            background: rgba(239,68,68,0.1);
+            border: 1px solid rgba(239,68,68,0.3);
+            color: #ef4444;
+            margin-top: 1rem;
+        }
+        .clear-storage-btn:hover {
+            background: rgba(239,68,68,0.15);
+        }
+        .setting-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 0;
+            border-bottom: 1px solid var(--border);
+        }
+        .setting-item:last-child {
+            border-bottom: none;
+        }
+        .toggle-switch {
+            width: 50px;
+            height: 26px;
+            background: #cbd5e1;
+            border-radius: 30px;
+            position: relative;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+        .toggle-switch.active {
+            background: var(--gold);
+        }
+        .toggle-switch .knob {
+            width: 22px;
+            height: 22px;
+            background: white;
+            border-radius: 50%;
+            position: absolute;
+            top: 2px;
+            right: 3px;
+            transition: var(--transition);
+        }
+        .toggle-switch.active .knob {
+            right: 25px;
+        }
+        .music-select {
+            background: #f8fafc;
+            border: 1px solid var(--border);
+            border-radius: 2rem;
+            padding: 0.3rem 0.8rem;
+            font-family: 'Cairo', sans-serif;
+            color: var(--text-primary);
+            outline: none;
+            cursor: pointer;
+        }
+        .music-select:focus {
+            border-color: var(--gold);
+        }
+        .privacy-highlight {
+            background: rgba(99,102,241,0.05);
+            border-right: 3px solid var(--gold);
+            padding: 1rem;
+            border-radius: 1rem;
+            margin: 1rem 0;
+        }
+        .privacy-card h3 {
+            color: var(--gold);
+            margin: 1rem 0 0.5rem 0;
+            font-size: 1.1rem;
+        }
+        .about-card h3 {
+            color: var(--gold);
+            margin: 1rem 0 0.5rem 0;
+        }
+        .toast {
+            position: fixed;
+            bottom: 1.5rem;
+            right: 1.5rem;
+            background: #1e293b;
+            border-right: 4px solid var(--gold);
+            padding: 0.8rem 1.2rem;
+            border-radius: 1rem;
+            z-index: 1100;
+            animation: slideInToast 0.3s ease;
+            box-shadow: var(--shadow-md);
+            font-size: 0.85rem;
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            color: white;
+        }
+        @keyframes slideInToast {
+            from { transform: translateX(100px); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+        .spinner {
+            width: 3rem;
+            height: 3rem;
+            border: 3px solid #e2e8f0;
+            border-top-color: var(--gold);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            margin: 2rem auto;
+        }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        footer {
+            text-align: center;
+            margin-top: 2.5rem;
+            padding-top: 1.5rem;
+            font-size: 0.7rem;
+            color: var(--text-secondary);
+            border-top: 1px solid var(--border);
+        }
+        @media (max-width: 768px) {
+            .sidebar-banner { right: -280px; }
+            .sidebar-banner.open-mobile { right: 0; }
+            .main-content { margin-right: 0; padding: 1rem; }
+            .show-banner-fab { display: flex; }
+            .chat-message { max-width: 90%; }
+            .post-actions { gap: 0.8rem; }
+            .action-btn span { display: none; }
+            .action-btn { padding: 0.4rem; }
+            .post-image img { max-height: 250px; }
+        }
+        @media (max-width: 480px) {
+            .badge { padding: 0.3rem 0.8rem; font-size: 0.6rem; }
+            .status-card { flex-direction: column; align-items: stretch; text-align: center; }
+            .refresh-btn { justify-content: center; }
+            .post-image img { max-height: 200px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-animation" id="bgAnimation"></div>
+    <button class="show-banner-fab" id="showBannerFab"><i class="fas fa-chevron-right"></i></button>
+    <div class="app-wrapper">
+        <aside class="sidebar-banner" id="sidebarBanner">
+            <div class="banner-header"><h3><i class="fas fa-ghost"></i> TGhodit</h3><p>منصة تواصل فاخرة</p></div>
+            <button class="hide-banner-btn" id="hideBannerBtn"><i class="fas fa-chevron-left"></i> إخفاء القائمة</button>
+            <nav class="banner-nav">
+                <div class="nav-item active" data-page="home"><i class="fas fa-home"></i> الرئيسية</div>
+                <div class="nav-item" data-page="create"><i class="fas fa-feather-alt"></i> إنشاء منشور</div>
+                <div class="nav-item" data-page="chat"><i class="fas fa-comments"></i> دردشة عامة</div>
+                <div class="nav-item" data-page="contact"><i class="fas fa-envelope"></i> تواصل معنا</div>
+                <div class="nav-item" data-page="privacy"><i class="fas fa-shield-alt"></i> الخصوصية</div>
+                <div class="nav-item" data-page="about"><i class="fas fa-info-circle"></i> من نحن</div>
+                <div class="nav-item" data-page="settings"><i class="fas fa-sliders-h"></i> الإعدادات</div>
+            </nav>
+        </aside>
+        <main class="main-content" id="mainContent">
+            <div class="content-container">
+                <!-- الصفحة الرئيسية -->
+                <div id="homePage" class="page active">
+                    <div class="hero-section"><h1><i class="fas fa-ghost"></i> TGhodit</h1><div class="glow-text"><span class="badge"><i class="fas fa-bolt"></i> تفاعل فوري</span><span class="badge"><i class="fas fa-tag"></i> وسوم خاصة</span><span class="badge"><i class="fas fa-save"></i> حفظ دائم</span></div></div>
+                    <div class="search-bar"><i class="fas fa-search"></i><input type="text" id="searchInput" placeholder="ابحث في المنشورات..."></div>
+                    <div class="status-card"><div class="status-info"><i class="fas fa-crown" style="color:var(--gold)"></i><span id="statusMessage">جلب المنشورات...</span></div><button class="refresh-btn" id="refreshButton"><i class="fas fa-sync-alt"></i> تحديث يدوي</button></div>
+                    <div id="postsContainer"><div class="spinner"></div></div>
+                </div>
+                <!-- صفحة إنشاء منشور -->
+                <div id="createPage" class="page">
+                    <div class="hero-section"><h1><i class="fas fa-feather-alt"></i> إنشاء منشور جديد</h1><div class="glow-text"><span class="badge"><i class="fas fa-image"></i> إضافة صور</span><span class="badge"><i class="fas fa-paper-plane"></i> ترسل للإدارة</span></div></div>
+                    <div class="create-post-page"><form id="createPostFormPage" class="create-form"><input type="text" id="postTitlePage" placeholder="العنوان (اختياري)"><textarea id="postTextPage" placeholder="محتوى المنشور..." required></textarea><div class="image-upload-area" id="imageUploadArea"><i class="fas fa-cloud-upload-alt" style="font-size:2rem;color:var(--gold)"></i><p>اضغط أو اسحب الصورة هنا</p><small>(jpg, png, gif - حد أقصى 5 ميجابايت)</small><input type="file" id="imageInput" accept="image/*" style="display:none"></div><div id="imagePreviewContainer" style="text-align:center"></div><button type="submit" class="submit-btn" id="submitPostBtn"><i class="fas fa-paper-plane"></i> نشر المنشور</button></form></div>
+                </div>
+                <!-- صفحة الدردشة العامة -->
+                <div id="chatPage" class="page">
+                    <div class="hero-section"><h1><i class="fas fa-comments"></i> دردشة عامة</h1><div class="glow-text"><span class="badge"><i class="fas fa-globe"></i> عامة للجميع</span><span class="badge"><i class="fas fa-paper-plane"></i> ترسل إلى القناة</span><span class="badge"><i class="fas fa-save"></i> حفظ تلقائي</span><span class="badge"><i class="fas fa-at"></i> إشارات ذكية</span></div></div>
+                    <div class="chat-container"><div class="chat-header"><span><i class="fas fa-users"></i> <span id="chatMessageCount">0</span> رسالة</span><div style="display:flex;gap:0.5rem"><button id="refreshChatBtn"><i class="fas fa-sync-alt"></i> تحديث</button><button id="clearMyMessagesBtn" style="background:rgba(239,68,68,0.1)"><i class="fas fa-user-slash"></i> حذف رسائلي</button><button id="hideMyMessagesBtn" style="background:rgba(99,102,241,0.1)"><i class="fas fa-eye-slash"></i> إخفاء رسائلي</button></div></div><div class="chat-messages" id="chatMessages"><div class="chat-loading"><i class="fas fa-spinner fa-pulse"></i> جاري تحميل الرسائل...</div></div><div class="chat-input-area"><input type="text" id="chatInput" placeholder="اكتب رسالتك... استخدم @username للإشارة" maxlength="500"><button id="sendChatBtn"><i class="fas fa-paper-plane"></i> إرسال</button></div></div>
+                </div>
+                <!-- صفحة تواصل معنا -->
+                <div id="contactPage" class="page"><div class="hero-section"><h1><i class="fas fa-headset"></i> تواصل معنا</h1></div><div class="contact-card"><form id="contactForm" class="contact-form"><input type="text" id="contactName" placeholder="الاسم الكامل" required><input type="email" id="contactEmail" placeholder="البريد الإلكتروني" required><textarea id="contactMsg" placeholder="رسالتك..." required></textarea><button type="submit" class="submit-btn"><i class="fas fa-paper-plane"></i> إرسال</button></form></div></div>
+                <!-- صفحة الخصوصية -->
+                <div id="privacyPage" class="page"><div class="hero-section"><h1><i class="fas fa-shield-alt"></i> سياسة الخصوصية</h1></div><div class="privacy-card"><h3><i class="fas fa-database"></i> جمع المعلومات</h3><p>نحن في <strong>TGhodit</strong> نلتزم بحماية خصوصية مستخدمينا. يتم جمع المعلومات التالية تلقائياً عند استخدام المنصة: عنوان IP (لأغراض أمنية فقط)، نوع المتصفح ونظام التشغيل، نوع الجهاز، اللغة والمنطقة الزمنية.</p><h3><i class="fas fa-shield-alt"></i> استخدام المعلومات</h3><p>يتم استخدام المعلومات المجمعة للأغراض التالية فقط: حماية المنصة من الهجمات، تحسين أداء الموقع، منع المحتوى المسيء، تطوير الميزات والخدمات.</p><div class="privacy-highlight"><i class="fas fa-check-circle"></i> <strong>ملاحظة مهمة:</strong> نحن لا نبيع أو نشارك معلوماتك الشخصية مع أي طرف ثالث تحت أي ظرف.</div><h3><i class="fas fa-store"></i> ملفات تعريف الارتباط (Cookies)</h3><p>يستخدم موقعنا ملفات تعريف الارتباط لتحسين تجربة التصفح. هذه الملفات لا تحتوي على معلومات شخصية ولا يمكن استخدامها للتعرف عليك خارج المنصة.</p><h3><i class="fas fa-user-secret"></i> خصوصية المنشورات</h3><p>عند إنشاء منشور أو إرسال رسالة: هويتك الحقيقية لا تظهر للمستخدمين الآخرين، يتم مراجعة المحتوى قبل النشر، سيتم الرد عليك عبر البريد الإلكتروني خلال 24 ساعة.</p><h3><i class="fas fa-gavel"></i> حقوق المستخدم</h3><p>لديك الحق في: طلب حذف بياناتك الشخصية، طلب نسخة من البيانات المخزنة عنك، التواصل مع إدارة الموقع لأي استفسار.</p><h3><i class="fas fa-calendar-week"></i> تحديثات السياسة</h3><p>قد نقوم بتحديث سياسة الخصوصية من وقت لآخر. سيتم إعلامك بأي تغييرات جوهرية عبر إشعار داخل المنصة.</p><p class="privacy-highlight" style="margin-top:1rem"><i class="fas fa-calendar-alt"></i> آخر تحديث: <strong>24 مايو 2025</strong></p></div></div>
+                <!-- صفحة من نحن -->
+                <div id="aboutPage" class="page"><div class="hero-section"><h1><i class="fas fa-users"></i> من نحن</h1></div><div class="about-card"><h3><i class="fas fa-ghost"></i> TGhodit</h3><p>منصة تواصل اجتماعي عصرية تهدف إلى ربط المستخدمين بمحتوى فريد من قنوات تيليغرام بشكل مباشر وفاخر.</p><p>نقدم تجربة سلسة خالية من التعقيدات مع أحدث التقنيات وتصميم مستوحى من كبرى المنصات العالمية.</p><h3><i class="fas fa-bullseye"></i> رؤيتنا</h3><p>نسعى لأن نكون المنصة الأولى للتواصل الاجتماعي في العالم العربي، حيث نقدم بيئة آمنة ومريحة للجميع.</p><h3><i class="fas fa-heart"></i> قيمنا</h3><p>الخصوصية، الأمان، الاحترام، الإبداع، التطوير المستمر.</p><h3><i class="fas fa-chart-line"></i> إحصائياتنا</h3><p>أكثر من 10,000 مستخدم نشط، أكثر من 50,000 رسالة يومياً، أكثر من 1,000 منشور.</p><p><strong style="color:var(--gold)">🚀 فريق التطوير:</strong> The Ghost Team</p><p><strong style="color:var(--gold)">📧 للتواصل:</strong> admin@tghodit.com</p></div></div>
+                <!-- صفحة الإعدادات -->
+                <div id="settingsPage" class="page"><div class="hero-section"><h1><i class="fas fa-cog"></i> الإعدادات</h1></div><div class="settings-card"><div class="setting-item"><span><i class="fas fa-music"></i> موسيقى الخلفية</span><select id="musicSelect" class="music-select"><option value="none">🚫 بدون موسيقى</option><option value="1">🎵 موسيقى هادئة 1</option><option value="2">🎶 موسيقى هادئة 2</option><option value="3">🎹 بيانو هادئ</option><option value="4">🌊 أصوات طبيعة</option></select></div><div class="setting-item"><span><i class="fas fa-user"></i> اسم المستخدم</span><input type="text" id="usernameInput" placeholder="اسمك" style="background:#f8fafc;border:1px solid var(--border);border-radius:2rem;padding:0.3rem 0.8rem;width:150px"></div><div class="setting-item"><span><i class="fas fa-eye"></i> إخفاء رسائلي</span><div class="toggle-switch" id="hideMyMessagesToggle"><div class="knob"></div></div></div><div class="setting-item"><button id="clearCacheBtn" class="submit-btn clear-storage-btn" style="width:100%"><i class="fas fa-trash-alt"></i> مسح التخزين المؤقت للمنشورات</button></div><div class="setting-item"><button id="clearAllChatBtn" class="submit-btn clear-storage-btn" style="width:100%"><i class="fas fa-trash-alt"></i> مسح كل سجل المحادثة</button></div></div></div>
+                <footer><i class="fas fa-crown"></i> TGhodit 2025 · جميع الحقوق محفوظة</footer>
+            </div>
+        </main>
+    </div>
+    <div class="post-modal-overlay" id="postModalOverlay"><div class="post-modal-content"><div class="post-modal-header"><h3><i class="fas fa-file-alt" style="color:var(--gold)"></i> تفاصيل المنشور</h3><button class="post-modal-close" id="postModalClose">&times;</button></div><div class="post-modal-body" id="postModalBody"></div><div class="post-modal-image" id="postModalImage"></div><div class="post-modal-actions" id="postModalActions"></div></div></div>
+
+    <script>
+        // ======================================================================
+        // TGhodit - التطبيق الكامل والمتكامل
+        // جميع الحقوق محفوظة - أكثر من 2500 سطر من الكود المنظم
+        // ======================================================================
+        
+        // =============== القسم 1: الثوابت والتكوينات الأساسية ===============
+        const CONFIG = {
+            BOT_TOKEN: "8901733084:AAH9icgp3Q7krjOomq0jiVU5VQh0zcPkY_g",
+            CHAT_ID: "-1003963074157",
+            CONTACT_BOT: "8920328815:AAEOP0sR3Jc98i0osmfnh9t21m3WGusW2FA",
+            CONTACT_CHAT: "8416078700",
+            CHAT_BOT_TOKEN: "8999483920:AAFiSw1tqAK4uZW3qVc7wY2ZyHGD4tRKex0",
+            CHAT_GROUP_ID: "-1003948903154",
+            MAX_MESSAGE_LENGTH: 500,
+            MAX_IMAGE_SIZE: 5 * 1024 * 1024,
+            POLLING_INTERVAL: 3000,
+            MAX_STORED_MESSAGES: 2000,
+            MUSIC_URLS: {
+                "1": "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3",
+                "2": "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3",
+                "3": "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3",
+                "4": "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-4.mp3"
+            }
+        };
+        
+        const STORAGE_KEYS = {
+            POSTS: "tghodit_posts",
+            LIKES: "tghodit_likes",
+            SAVES: "tghodit_saves",
+            CHAT_MESSAGES: "tghodit_chat_messages",
+            CHAT_LAST_ID: "tghodit_chat_last_id",
+            USERNAME: "chat_username",
+            HIDE_MY_MESSAGES: "hide_my_messages",
+            MUSIC_SELECTION: "music_selection"
+        };
+        
+        // =============== القسم 2: حالة التطبيق العالمية ===============
+        let AppState = {
+            allPosts: [],
+            filteredPosts: [],
+            likesMap: new Map(),
+            savesMap: new Map(),
+            chatMessages: [],
+            chatLastUpdateId: 0,
+            currentUsername: localStorage.getItem(STORAGE_KEYS.USERNAME) || "زائر_" + Math.floor(Math.random() * 10000),
+            hideMyMessages: localStorage.getItem(STORAGE_KEYS.HIDE_MY_MESSAGES) === "true",
+            currentMusic: null,
+            pollingInterval: null,
+            isLoading: false,
+            pendingImage: null,
+            isSending: false
+        };
+        
+        // =============== القسم 3: دوال مساعدة عامة ===============
+        function escapeHtml(str) {
+            if (!str) return '';
+            return str.replace(/[&<>]/g, (m) => {
+                const map = { '&': '&amp;', '<': '&lt;', '>': '&gt;' };
+                return map[m] || m;
+            });
+        }
+        
+        function showToast(message, isError = false) {
+            const toast = document.createElement('div');
+            toast.className = 'toast';
+            toast.innerHTML = `<i class="fas ${isError ? 'fa-exclamation-triangle' : 'fa-info-circle'}" style="color: var(--gold);"></i> ${message}`;
+            document.body.appendChild(toast);
+            setTimeout(() => {
+                toast.style.opacity = '0';
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
+        }
+        
+        function formatTime(date) {
+            return date.toLocaleTimeString('ar-EG', { hour: '2-digit', minute: '2-digit' });
+        }
+        
+        function formatDate(date) {
+            return date.toLocaleString('ar-EG', { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
+        }
+        
+        function scrollChatToBottom() {
+            const container = document.getElementById('chatMessages');
+            if (container) {
+                container.scrollTop = container.scrollHeight;
+            }
+        }
+        
+        function sortMessagesByDate(messages) {
+            return messages.sort((a, b) => new Date(a.time).getTime() - new Date(b.time).getTime());
+        }
+        
+        // معالجة الإشارات في النص
+        function processMentions(text, allUsernames) {
+            let processedText = text;
+            const mentionRegex = /@(\w+)/g;
+            const matches = text.matchAll(mentionRegex);
+            for (const match of matches) {
+                const mentionedUser = match[1];
+                if (allUsernames.includes(mentionedUser)) {
+                    const regex = new RegExp(`@${escapeRegex(mentionedUser)}`, 'g');
+                    processedText = processedText.replace(regex, `<span style="color: var(--gold); font-weight: bold; background: rgba(99,102,241,0.1); padding: 0.1rem 0.3rem; border-radius: 0.5rem;">@${escapeHtml(mentionedUser)}</span>`);
+                }
+            }
+            return processedText;
+        }
+        
+        function escapeRegex(str) {
+            return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+        }
+        
+        // إضافة زر الإشارة بجانب اسم المستخدم
+        function addMentionButton(username) {
+            const btn = document.createElement('button');
+            btn.className = 'mention-btn';
+            btn.innerHTML = '<i class="fas fa-at"></i>';
+            btn.title = `إشارة إلى ${username}`;
+            btn.onclick = (e) => {
+                e.stopPropagation();
+                const input = document.getElementById('chatInput');
+                if (input) {
+                    input.value += `@${username} `;
+                    input.focus();
+                }
+            };
+            return btn;
+        }
+        
+        // =============== القسم 4: معالجة المنشورات الخاصة ===============
+        function getPostSpecialType(text) {
+            if (!text) return null;
+            const lowerText = text.toLowerCase().trim();
+            if (lowerText.startsWith('/info')) return { type: 'info', name: '📢 معلومات', icon: 'fa-info-circle' };
+            if (lowerText.startsWith('/admin')) return { type: 'admin', name: '👑 إداري', icon: 'fa-crown' };
+            if (lowerText.startsWith('/user')) return { type: 'user', name: '👤 مستخدم', icon: 'fa-user' };
+            if (lowerText.startsWith('/msd')) return { type: 'msd', name: '⚙️ نظام', icon: 'fa-cogs' };
+            if (lowerText.startsWith('/trend')) return { type: 'trend', name: '📈 ترند', icon: 'fa-chart-line' };
+            return null;
+        }
+        
+        function cleanSpecialCommand(text, command) {
+            if (!text) return text;
+            const lines = text.split('\n');
+            const firstLine = lines[0] || '';
+            if (firstLine.trim().toLowerCase().startsWith(command.toLowerCase())) {
+                lines[0] = firstLine.substring(command.length).trim();
+                return lines.join('\n').trim();
+            }
+            return text;
+        }
+        
+        function getCleanedPostText(text) {
+            if (!text) return text;
+            const lowerText = text.toLowerCase().trim();
+            if (lowerText.startsWith('/info')) return cleanSpecialCommand(text, '/info');
+            if (lowerText.startsWith('/admin')) return cleanSpecialCommand(text, '/admin');
+            if (lowerText.startsWith('/user')) return cleanSpecialCommand(text, '/user');
+            if (lowerText.startsWith('/msd')) return cleanSpecialCommand(text, '/msd');
+            if (lowerText.startsWith('/trend')) return cleanSpecialCommand(text, '/trend');
+            return text;
+        }
+        
+        // =============== القسم 5: دوال تخزين المنشورات في localStorage ===============
+        function savePostsToLocal() {
+            try { localStorage.setItem(STORAGE_KEYS.POSTS, JSON.stringify(AppState.allPosts)); } catch(e) { console.warn("Failed to save posts", e); }
+        }
+        
+        function loadPostsFromLocal() {
+            const saved = localStorage.getItem(STORAGE_KEYS.POSTS);
+            if (saved) {
+                try { AppState.allPosts = JSON.parse(saved); return true; } catch(e) {}
+            }
+            return false;
+        }
+        
+        function saveLikesToLocal() {
+            const likesObj = {};
+            for (let [id, data] of AppState.likesMap) likesObj[id] = data;
+            localStorage.setItem(STORAGE_KEYS.LIKES, JSON.stringify(likesObj));
+        }
+        
+        function loadLikesFromLocal() {
+            const saved = localStorage.getItem(STORAGE_KEYS.LIKES);
+            if (saved) {
+                try {
+                    const likesObj = JSON.parse(saved);
+                    for (let [id, data] of Object.entries(likesObj)) AppState.likesMap.set(parseInt(id), data);
+                    return true;
+                } catch(e) {}
+            }
+            return false;
+        }
+        
+        function saveSavesToLocal() {
+            const savesObj = {};
+            for (let [id, saved] of AppState.savesMap) savesObj[id] = saved;
+            localStorage.setItem(STORAGE_KEYS.SAVES, JSON.stringify(savesObj));
+        }
+        
+        function loadSavesFromLocal() {
+            const saved = localStorage.getItem(STORAGE_KEYS.SAVES);
+            if (saved) {
+                try {
+                    const savesObj = JSON.parse(saved);
+                    for (let [id, savedFlag] of Object.entries(savesObj)) AppState.savesMap.set(parseInt(id), savedFlag);
+                    return true;
+                } catch(e) {}
+            }
+            return false;
+        }
+        
+        // =============== القسم 6: دوال المنشورات وجلبها ===============
+        function mergePosts(newPosts) {
+            const existingMap = new Map();
+            for (const post of AppState.allPosts) existingMap.set(post.id, post);
+            let addedCount = 0;
+            for (const newPost of newPosts) {
+                if (!existingMap.has(newPost.id)) {
+                    existingMap.set(newPost.id, newPost);
+                    addedCount++;
+                    if (!AppState.likesMap.has(newPost.id)) AppState.likesMap.set(newPost.id, { count: 0, liked: false });
+                    if (!AppState.savesMap.has(newPost.id)) AppState.savesMap.set(newPost.id, false);
+                } else {
+                    const existing = existingMap.get(newPost.id);
+                    if (newPost.photoUrl !== existing.photoUrl) {
+                        existing.photoUrl = newPost.photoUrl;
+                        existing.hasPhoto = newPost.hasPhoto;
+                    }
+                    if (newPost.text !== existing.text) existing.text = newPost.text;
+                }
+            }
+            AppState.allPosts = Array.from(existingMap.values());
+            AppState.allPosts.sort((a, b) => b.date - a.date);
+            savePostsToLocal();
+            saveLikesToLocal();
+            saveSavesToLocal();
+            return addedCount;
+        }
+        
+        async function fetchChannelPosts() {
+            const statusSpan = document.getElementById('statusMessage');
+            if (statusSpan) statusSpan.innerHTML = '<i class="fas fa-spinner fa-pulse"></i> جلب...';
+            try {
+                const url = `https://api.telegram.org/bot${CONFIG.BOT_TOKEN}/getUpdates?offset=-100&limit=100`;
+                const response = await fetch(url);
+                const data = await response.json();
+                if (!data.ok) throw new Error(data.description);
+                const updates = data.result || [];
+                const newPosts = [];
+                for (const update of updates) {
+                    let msg = update.channel_post || update.message;
+                    if (msg && msg.chat && msg.chat.id.toString() === CONFIG.CHAT_ID.toString()) {
+                        let text = msg.text || msg.caption || "📷 محتوى مرئي";
+                        let hasPhoto = !!(msg.photo && msg.photo.length);
+                        let photoUrl = null;
+                        if (hasPhoto) {
+                            try {
+                                const fileId = msg.photo[msg.photo.length - 1].file_id;
+                                const fileRes = await fetch(`https://api.telegram.org/bot${CONFIG.BOT_TOKEN}/getFile?file_id=${fileId}`);
+                                const fileData = await fileRes.json();
+                                if (fileData.ok) photoUrl = `https://api.telegram.org/file/bot${CONFIG.BOT_TOKEN}/${fileData.result.file_path}`;
+                            } catch(e) {}
+                        }
+                        newPosts.push({
+                            id: msg.message_id,
+                            text: text,
+                            date: msg.date,
+                            hasPhoto: hasPhoto,
+                            photoUrl: photoUrl
+                        });
+                    }
+                }
+                const addedCount = mergePosts(newPosts);
+                AppState.filteredPosts = [...AppState.allPosts];
+                renderPosts();
+                if (statusSpan) {
+                    if (addedCount > 0) statusSpan.innerHTML = `<i class="fas fa-crown" style="color: var(--gold);"></i> ${AppState.allPosts.length} منشور (+${addedCount} جديد)`;
+                    else statusSpan.innerHTML = `<i class="fas fa-crown" style="color: var(--gold);"></i> ${AppState.allPosts.length} منشور`;
+                }
+            } catch(error) {
+                console.error("Fetch error:", error);
+                if (AppState.allPosts.length > 0) {
+                    AppState.filteredPosts = [...AppState.allPosts];
+                    renderPosts();
+                    if (statusSpan) statusSpan.innerHTML = `<i class="fas fa-database" style="color: var(--gold);"></i> ${AppState.allPosts.length} منشور (غير متصل)`;
+                    showToast('⚠️ لا يمكن الاتصال بالقناة، يتم عرض المنشورات المخزنة');
+                } else {
+                    const postsContainer = document.getElementById('postsContainer');
+                    if (postsContainer) postsContainer.innerHTML = `<div style="text-align:center;padding:2rem;"><i class="fas fa-exclamation-triangle" style="font-size:2rem;color:var(--gold);"></i><p>⚠️ لا توجد منشورات</p></div>`;
+                    if (statusSpan) statusSpan.innerHTML = '❌ فشل الاتصال';
+                }
+            }
+        }
+        
+        function renderPosts() {
+            const postsContainer = document.getElementById('postsContainer');
+            if (!postsContainer) return;
+            if (!AppState.filteredPosts.length) {
+                postsContainer.innerHTML = `<div style="text-align:center;padding:2.5rem;"><i class="fas fa-inbox" style="font-size:2.5rem;color:var(--gold);opacity:0.5;"></i><p>لا توجد منشورات</p></div>`;
+                return;
+            }
+            const grid = document.createElement('div');
+            grid.className = 'posts-grid';
+            for (const post of AppState.filteredPosts) {
+                const postDate = new Date(post.date * 1000);
+                const formattedDate = formatDate(postDate);
+                const likeData = AppState.likesMap.get(post.id) || { count: 0, liked: false };
+                const isSaved = AppState.savesMap.get(post.id) || false;
+                const special = getPostSpecialType(post.text);
+                const cleanText = getCleanedPostText(post.text);
+                const needsReadMore = cleanText.length > 200;
+                const shortText = needsReadMore ? cleanText.substring(0, 200) + '...' : cleanText;
+                const specialClass = special ? `special-${special.type}` : '';
+                const card = document.createElement('div');
+                card.className = `post-card ${specialClass}`;
+                card.setAttribute('data-id', post.id);
+                let specialBadgeHtml = '';
+                if (special) {
+                    specialBadgeHtml = `<div class="special-badge ${special.type}"><i class="fas ${special.icon}"></i> ${special.name}</div>`;
+                }
+                card.innerHTML = specialBadgeHtml + `
+                    <div class="post-header">
+                        <div class="avatar"><i class="fas fa-ghost"></i></div>
+                        <div class="post-info">
+                            <div class="post-author"><i class="fas fa-check-circle"></i> TGhoditAdmin<span class="admin-badge"><i class="fas fa-crown"></i> المدير</span></div>
+                            <div class="post-time"><i class="far fa-calendar-alt"></i> ${formattedDate}</div>
+                        </div>
+                    </div>
+                    <div class="post-content">
+                        <div class="post-text">${escapeHtml(shortText)}</div>
+                        ${needsReadMore ? `<button class="read-more-btn" onclick="event.stopPropagation(); openPostModal(${post.id})"><i class="fas fa-arrow-down"></i> عرض المزيد</button>` : ''}
+                    </div>
+                    ${post.hasPhoto && post.photoUrl ? `<div class="post-image" onclick="event.stopPropagation(); openPostModal(${post.id})"><img src="${post.photoUrl}" alt="صورة المنشور" loading="lazy"></div>` : ''}
+                    <div class="post-actions">
+                        <button class="action-btn ${likeData.liked ? 'liked' : ''}" onclick="event.stopPropagation(); toggleLike(${post.id}, this)"><i class="fas fa-heart"></i> <span>${likeData.count}</span></button>
+                        <button class="action-btn ${isSaved ? 'saved' : ''}" onclick="event.stopPropagation(); toggleSave(${post.id}, this)"><i class="fas fa-bookmark"></i> حفظ</button>
+                    </div>
+                `;
+                card.addEventListener('click', () => openPostModal(post.id));
+                grid.appendChild(card);
+            }
+            postsContainer.innerHTML = '';
+            postsContainer.appendChild(grid);
+        }
+        
+        function openPostModal(postId) {
+            const post = AppState.allPosts.find(p => p.id == postId);
+            if (!post) return;
+            const cleanText = getCleanedPostText(post.text);
+            const likeData = AppState.likesMap.get(post.id) || { count: 0, liked: false };
+            const isSaved = AppState.savesMap.get(post.id) || false;
+            const formattedDate = formatDate(new Date(post.date * 1000));
+            const special = getPostSpecialType(post.text);
+            const modalBody = document.getElementById('postModalBody');
+            const modalImage = document.getElementById('postModalImage');
+            const modalActions = document.getElementById('postModalActions');
+            const modalOverlay = document.getElementById('postModalOverlay');
+            let specialBadgeHtml = '';
+            if (special) {
+                specialBadgeHtml = `<div class="special-badge ${special.type}" style="position:relative; display:inline-block; margin-bottom:1rem;"><i class="fas ${special.icon}"></i> ${special.name}</div>`;
+            }
+            if (modalBody) {
+                modalBody.innerHTML = `${specialBadgeHtml}<div class="post-modal-text">${escapeHtml(cleanText)}</div><div class="post-time" style="margin-top:0.5rem;"><i class="far fa-calendar-alt"></i> ${formattedDate}</div>`;
+            }
+            if (modalImage) {
+                modalImage.innerHTML = post.photoUrl ? `<img src="${post.photoUrl}" alt="صورة المنشور">` : '';
+            }
+            if (modalActions) {
+                modalActions.innerHTML = `
+                    <button class="post-modal-action-btn ${likeData.liked ? 'liked' : ''}" id="modalLikeBtn"><i class="fas fa-heart"></i> <span id="modalLikeCount">${likeData.count}</span> إعجاب</button>
+                    <button class="post-modal-action-btn ${isSaved ? 'saved' : ''}" id="modalSaveBtn"><i class="fas fa-bookmark"></i> ${isSaved ? 'تم الحفظ' : 'حفظ'}</button>
+                `;
+                const modalLikeBtn = document.getElementById('modalLikeBtn');
+                const modalSaveBtn = document.getElementById('modalSaveBtn');
+                if (modalLikeBtn) {
+                    modalLikeBtn.addEventListener('click', () => {
+                        const newLikeData = AppState.likesMap.get(post.id) || { count: 0, liked: false };
+                        newLikeData.liked = !newLikeData.liked;
+                        newLikeData.count += newLikeData.liked ? 1 : -1;
+                        if (newLikeData.count < 0) newLikeData.count = 0;
+                        AppState.likesMap.set(post.id, newLikeData);
+                        saveLikesToLocal();
+                        document.getElementById('modalLikeCount').innerText = newLikeData.count;
+                        modalLikeBtn.classList.toggle('liked', newLikeData.liked);
+                        const cardBtn = document.querySelector(`.post-card[data-id="${post.id}"] .action-btn:first-child`);
+                        if (cardBtn) {
+                            cardBtn.querySelector('span').innerText = newLikeData.count;
+                            cardBtn.classList.toggle('liked', newLikeData.liked);
+                        }
+                        showToast(newLikeData.liked ? '❤️ أضفت إعجاباً' : '💔 أزلت إعجابك');
+                    });
+                }
+                if (modalSaveBtn) {
+                    modalSaveBtn.addEventListener('click', () => {
+                        const saved = !AppState.savesMap.get(post.id);
+                        AppState.savesMap.set(post.id, saved);
+                        saveSavesToLocal();
+                        modalSaveBtn.classList.toggle('saved', saved);
+                        modalSaveBtn.innerHTML = `<i class="fas fa-bookmark"></i> ${saved ? 'تم الحفظ' : 'حفظ'}`;
+                        const cardSaveBtn = document.querySelector(`.post-card[data-id="${post.id}"] .action-btn:last-child`);
+                        if (cardSaveBtn) cardSaveBtn.classList.toggle('saved', saved);
+                        showToast(saved ? '✅ تم حفظ المنشور' : '📁 تم إزالة الحفظ');
+                    });
+                }
+            }
+            if (modalOverlay) modalOverlay.classList.add('open');
+        }
+        
+        window.toggleLike = (postId, btn) => {
+            const data = AppState.likesMap.get(postId) || { count: 0, liked: false };
+            data.liked = !data.liked;
+            data.count += data.liked ? 1 : -1;
+            if (data.count < 0) data.count = 0;
+            AppState.likesMap.set(postId, data);
+            btn.querySelector('span').innerText = data.count;
+            btn.classList.toggle('liked', data.liked);
+            saveLikesToLocal();
+        };
+        
+        window.toggleSave = (postId, btn) => {
+            const saved = !AppState.savesMap.get(postId);
+            AppState.savesMap.set(postId, saved);
+            btn.classList.toggle('saved', saved);
+            saveSavesToLocal();
+            showToast(saved ? '✅ تم الحفظ' : '📁 تم الإزالة');
+        };
+        
+        // =============== القسم 7: دوال رفع الصورة ===============
+        function setupImageUpload() {
+            const uploadArea = document.getElementById('imageUploadArea');
+            const imageInput = document.getElementById('imageInput');
+            const previewContainer = document.getElementById('imagePreviewContainer');
+            if (!uploadArea || !imageInput) return;
+            uploadArea.addEventListener('click', () => imageInput.click());
+            uploadArea.addEventListener('dragover', (e) => { e.preventDefault(); uploadArea.classList.add('dragover'); });
+            uploadArea.addEventListener('dragleave', () => uploadArea.classList.remove('dragover'));
+            uploadArea.addEventListener('drop', (e) => {
+                e.preventDefault();
+                uploadArea.classList.remove('dragover');
+                const file = e.dataTransfer.files[0];
+                if (file && file.type.startsWith('image/')) handleImageFile(file);
+                else showToast('⚠️ الرجاء إسقاط ملف صورة صالح', true);
+            });
+            imageInput.addEventListener('change', (e) => { if (e.target.files && e.target.files[0]) handleImageFile(e.target.files[0]); });
+        }
+        
+        function handleImageFile(file) {
+            if (file.size > CONFIG.MAX_IMAGE_SIZE) {
+                showToast('⚠️ حجم الصورة كبير جداً (حد أقصى 5 ميجابايت)', true);
+                return;
+            }
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                AppState.pendingImage = { dataUrl: e.target.result, file: file, name: file.name };
+                displayImagePreview(e.target.result);
+                showToast('✅ تم إضافة الصورة بنجاح');
+            };
+            reader.readAsDataURL(file);
+        }
+        
+        function displayImagePreview(imageUrl) {
+            const previewContainer = document.getElementById('imagePreviewContainer');
+            if (!previewContainer) return;
+            previewContainer.innerHTML = `
+                <div class="image-preview">
+                    <img src="${imageUrl}" alt="معاينة الصورة">
+                    <button type="button" class="remove-image-btn" id="removeImageBtn"><i class="fas fa-times"></i></button>
+                </div>
+            `;
+            const removeBtn = document.getElementById('removeImageBtn');
+            if (removeBtn) {
+                removeBtn.addEventListener('click', () => {
+                    AppState.pendingImage = null;
+                    previewContainer.innerHTML = '';
+                    const imageInput = document.getElementById('imageInput');
+                    if (imageInput) imageInput.value = '';
+                    showToast('🗑️ تم إزالة الصورة');
+                });
+            }
+        }
+        
+        // =============== القسم 8: دوال الدردشة العامة - الجزء الأهم ===============
+        
+        // 8.1 إرسال رسالة إلى التيليغرام
+        async function sendMessageToTelegram(message, username) {
+            try {
+                const fullMessage = `💬 ${username}:\n${message}`;
+                const response = await fetch(`https://api.telegram.org/bot${CONFIG.CHAT_BOT_TOKEN}/sendMessage`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        chat_id: CONFIG.CHAT_GROUP_ID,
+                        text: fullMessage,
+                        parse_mode: 'HTML'
+                    })
+                });
+                const data = await response.json();
+                if (data.ok) {
+                    return { success: true, messageId: data.result.message_id };
+                }
+                return { success: false, error: data.description };
+            } catch(e) {
+                console.error("Error sending message:", e);
+                return { success: false, error: e.message };
+            }
+        }
+        
+        // 8.2 إضافة رسالة محلياً (تظهر فوراً في الأسفل مع الترتيب الصحيح)
+        function addMessageLocally(text, username, isOwn) {
+            const newMessage = {
+                id: Date.now(),
+                text: text,
+                username: username,
+                time: new Date().toISOString(),
+                isOwn: isOwn,
+                canDelete: (username === AppState.currentUsername || AppState.currentUsername === "مدير")
+            };
+            AppState.chatMessages.push(newMessage);
+            AppState.chatMessages = sortMessagesByDate(AppState.chatMessages);
+            if (AppState.chatMessages.length > CONFIG.MAX_STORED_MESSAGES) {
+                AppState.chatMessages = AppState.chatMessages.slice(-CONFIG.MAX_STORED_MESSAGES);
+            }
+            saveChatMessagesToLocal();
+            renderChatMessages();
+            setTimeout(() => scrollChatToBottom(), 50);
+            const countSpan = document.getElementById('chatMessageCount');
+            if (countSpan) countSpan.innerText = AppState.chatMessages.length;
+            return newMessage;
+        }
+        
+        // 8.3 جلب جميع الرسائل من القناة (مع حل مشكلة الجلب)
+        async function fetchAllChatMessages() {
+            if (AppState.isLoading) return;
+            AppState.isLoading = true;
+            const container = document.getElementById('chatMessages');
+            if (container) container.innerHTML = '<div class="chat-loading"><i class="fas fa-spinner fa-pulse"></i> جاري تحميل جميع الرسائل...</div>';
+            try {
+                let allMessages = [];
+                let lastUpdateId = 0;
+                let hasMore = true;
+                let loopCount = 0;
+                const maxLoops = 50; // منع الحلقات اللانهائية
+                
+                while (hasMore && loopCount < maxLoops) {
+                    loopCount++;
+                    const url = `https://api.telegram.org/bot${CONFIG.CHAT_BOT_TOKEN}/getUpdates?offset=${lastUpdateId}&limit=100`;
+                    const response = await fetch(url);
+                    const data = await response.json();
+                    
+                    if (!data.ok) {
+                        console.error("API Error:", data);
+                        hasMore = false;
+                        break;
+                    }
+                    
+                    if (!data.result || data.result.length === 0) {
+                        hasMore = false;
+                        break;
+                    }
+                    
+                    for (const update of data.result) {
+                        if (update.update_id >= lastUpdateId) {
+                            lastUpdateId = update.update_id + 1;
+                        }
+                        
+                        const msg = update.channel_post || update.message;
+                        if (msg && msg.chat && msg.chat.id.toString() === CONFIG.CHAT_GROUP_ID.toString()) {
+                            let text = msg.text || msg.caption || "";
+                            let username = "مستخدم";
+                            
+                            const usernameMatch = text.match(/💬 (.+?):\n/);
+                            if (usernameMatch) {
+                                username = usernameMatch[1];
+                                text = text.substring(usernameMatch[0].length);
+                            }
+                            
+                            allMessages.push({
+                                id: msg.message_id,
+                                text: text,
+                                username: username,
+                                time: new Date(msg.date * 1000).toISOString(),
+                                isOwn: (username === AppState.currentUsername),
+                                canDelete: (username === AppState.currentUsername || AppState.currentUsername === "مدير")
+                            });
+                        }
+                    }
+                    
+                    if (data.result.length < 100) {
+                        hasMore = false;
+                    }
+                    
+                    await new Promise(r => setTimeout(r, 200));
+                }
+                
+                // ترتيب الرسائل حسب التاريخ والوقت
+                allMessages = sortMessagesByDate(allMessages);
+                
+                // دمج الرسائل مع الحالية (تجنب التكرار)
+                const existingIds = new Set(AppState.chatMessages.map(m => m.id));
+                for (const msg of allMessages) {
+                    if (!existingIds.has(msg.id)) {
+                        AppState.chatMessages.push(msg);
+                    }
+                }
+                
+                // ترتيب جميع الرسائل
+                AppState.chatMessages = sortMessagesByDate(AppState.chatMessages);
+                
+                if (AppState.chatMessages.length > 0) {
+                    AppState.chatLastUpdateId = AppState.chatMessages[AppState.chatMessages.length - 1].id;
+                }
+                
+                saveChatMessagesToLocal();
+                renderChatMessages();
+                showToast(`📨 تم تحميل ${AppState.chatMessages.length} رسالة من الدردشة العامة`);
+                
+                const countSpan = document.getElementById('chatMessageCount');
+                if (countSpan) countSpan.innerText = AppState.chatMessages.length;
+                
+                setTimeout(() => scrollChatToBottom(), 100);
+                
+            } catch(e) {
+                console.error("Error loading messages:", e);
+                showToast('⚠️ فشل تحميل الرسائل من القناة', true);
+                renderChatMessages();
+            } finally {
+                AppState.isLoading = false;
+            }
+        }
+        
+        // 8.4 جلب الرسائل الجديدة فقط
+        async function fetchNewChatMessages() {
+            try {
+                const url = `https://api.telegram.org/bot${CONFIG.CHAT_BOT_TOKEN}/getUpdates?offset=${AppState.chatLastUpdateId + 1}&limit=100`;
+                const response = await fetch(url);
+                const data = await response.json();
+                
+                if (data.ok && data.result && data.result.length > 0) {
+                    let newMessages = [];
+                    let maxId = AppState.chatLastUpdateId;
+                    
+                    for (const update of data.result) {
+                        if (update.update_id > maxId) maxId = update.update_id;
+                        const msg = update.channel_post || update.message;
+                        if (msg && msg.chat && msg.chat.id.toString() === CONFIG.CHAT_GROUP_ID.toString()) {
+                            let text = msg.text || msg.caption || "";
+                            let username = "مستخدم";
+                            
+                            const usernameMatch = text.match(/💬 (.+?):\n/);
+                            if (usernameMatch) {
+                                username = usernameMatch[1];
+                                text = text.substring(usernameMatch[0].length);
+                            }
+                            
+                            const existing = AppState.chatMessages.find(m => m.id === msg.message_id);
+                            if (!existing) {
+                                newMessages.push({
+                                    id: msg.message_id,
+                                    text: text,
+                                    username: username,
+                                    time: new Date(msg.date * 1000).toISOString(),
+                                    isOwn: (username === AppState.currentUsername),
+                                    canDelete: (username === AppState.currentUsername || AppState.currentUsername === "مدير")
+                                });
+                            }
+                        }
+                    }
+                    
+                    if (newMessages.length > 0) {
+                        AppState.chatLastUpdateId = maxId;
+                        for (const msg of newMessages) AppState.chatMessages.push(msg);
+                        AppState.chatMessages = sortMessagesByDate(AppState.chatMessages);
+                        saveChatMessagesToLocal();
+                        renderChatMessages();
+                        
+                        const countSpan = document.getElementById('chatMessageCount');
+                        if (countSpan) countSpan.innerText = AppState.chatMessages.length;
+                        
+                        setTimeout(() => scrollChatToBottom(), 50);
+                        
+                        if (newMessages.length === 1) {
+                            showToast(`📨 رسالة جديدة من ${newMessages[0].username}`);
+                        } else if (newMessages.length > 1) {
+                            showToast(`📨 ${newMessages.length} رسائل جديدة`);
+                        }
+                    }
+                }
+            } catch(e) {
+                console.error("Error fetching new messages:", e);
+            }
+        }
+        
+        // 8.5 حذف رسالة فردية
+        function deleteChatMessage(messageId) {
+            const messageIndex = AppState.chatMessages.findIndex(m => m.id === messageId);
+            if (messageIndex !== -1) {
+                const message = AppState.chatMessages[messageIndex];
+                if (message.username === AppState.currentUsername || AppState.currentUsername === "مدير") {
+                    AppState.chatMessages.splice(messageIndex, 1);
+                    AppState.chatMessages = sortMessagesByDate(AppState.chatMessages);
+                    saveChatMessagesToLocal();
+                    renderChatMessages();
+                    showToast('🗑️ تم حذف الرسالة بنجاح');
+                    const countSpan = document.getElementById('chatMessageCount');
+                    if (countSpan) countSpan.innerText = AppState.chatMessages.length;
+                } else {
+                    showToast('⚠️ لا يمكنك حذف رسائل الآخرين', true);
+                }
+            }
+        }
+        
+        // 8.6 حذف رسائلي فقط
+        function deleteMyMessages() {
+            if (confirm('⚠️ هل أنت متأكد من حذف جميع رسائلك فقط؟\n\nسيتم حذف الرسائل التي أرسلتها أنت فقط من السجل المحلي.')) {
+                const beforeCount = AppState.chatMessages.length;
+                AppState.chatMessages = AppState.chatMessages.filter(m => m.username !== AppState.currentUsername);
+                AppState.chatMessages = sortMessagesByDate(AppState.chatMessages);
+                const deletedCount = beforeCount - AppState.chatMessages.length;
+                saveChatMessagesToLocal();
+                renderChatMessages();
+                const countSpan = document.getElementById('chatMessageCount');
+                if (countSpan) countSpan.innerText = AppState.chatMessages.length;
+                showToast(`🗑️ تم حذف ${deletedCount} من رسائلك بنجاح`);
+                setTimeout(() => scrollChatToBottom(), 50);
+            }
+        }
+        
+        // 8.7 إخفاء/إظهار رسائلي
+        function toggleHideMyMessages() {
+            AppState.hideMyMessages = !AppState.hideMyMessages;
+            localStorage.setItem(STORAGE_KEYS.HIDE_MY_MESSAGES, AppState.hideMyMessages);
+            renderChatMessages();
+            
+            const toggle = document.getElementById('hideMyMessagesToggle');
+            if (toggle) {
+                if (AppState.hideMyMessages) toggle.classList.add('active');
+                else toggle.classList.remove('active');
+            }
+            
+            showToast(AppState.hideMyMessages ? '👁️ تم إخفاء رسائلك من الشاشة' : '👁️ تم إظهار رسائلك');
+        }
+        
+        // 8.8 مسح كل سجل المحادثة
+        function clearAllChatHistory() {
+            if (confirm('⚠️ هل أنت متأكد من مسح كل سجل المحادثة المحلي بالكامل؟\n\nملاحظة: هذا لا يؤثر على رسائل القناة الأصلية، فقط يمسح النسخة المخزنة في متصفحك.')) {
+                AppState.chatMessages = [];
+                AppState.chatLastUpdateId = 0;
+                localStorage.removeItem(STORAGE_KEYS.CHAT_MESSAGES);
+                localStorage.removeItem(STORAGE_KEYS.CHAT_LAST_ID);
+                renderChatMessages();
+                const countSpan = document.getElementById('chatMessageCount');
+                if (countSpan) countSpan.innerText = 0;
+                showToast('🗑️ تم مسح كل سجل المحادثة المحلي بنجاح');
+            }
+        }
+        
+        // 8.9 حفظ رسائل الدردشة في localStorage
+        function saveChatMessagesToLocal() {
+            try {
+                localStorage.setItem(STORAGE_KEYS.CHAT_MESSAGES, JSON.stringify(AppState.chatMessages));
+                localStorage.setItem(STORAGE_KEYS.CHAT_LAST_ID, AppState.chatLastUpdateId);
+            } catch(e) {}
+        }
+        
+        // 8.10 تحميل رسائل الدردشة المخزنة
+        function loadStoredChatMessages() {
+            const saved = localStorage.getItem(STORAGE_KEYS.CHAT_MESSAGES);
+            if (saved) {
+                try {
+                    AppState.chatMessages = JSON.parse(saved);
+                    AppState.chatMessages = sortMessagesByDate(AppState.chatMessages);
+                    AppState.chatLastUpdateId = parseInt(localStorage.getItem(STORAGE_KEYS.CHAT_LAST_ID) || "0");
+                    renderChatMessages();
+                    const countSpan = document.getElementById('chatMessageCount');
+                    if (countSpan) countSpan.innerText = AppState.chatMessages.length;
+                    setTimeout(() => scrollChatToBottom(), 100);
+                    return true;
+                } catch(e) {}
+            }
+            return false;
+        }
+        
+        // 8.11 عرض رسائل الدردشة في الواجهة
+        function renderChatMessages() {
+            const container = document.getElementById('chatMessages');
+            if (!container) return;
+            
+            // فلترة الرسائل حسب إعداد إخفاء رسائلي
+            let messagesToShow = AppState.chatMessages;
+            if (AppState.hideMyMessages) {
+                messagesToShow = AppState.chatMessages.filter(m => !m.isOwn);
+            }
+            
+            if (messagesToShow.length === 0) {
+                container.innerHTML = '<div class="chat-loading"><i class="fas fa-comments"></i> لا توجد رسائل بعد، كن أول من يرسل!<br><small>اضغط على زر "تحديث" لتحميل الرسائل القديمة</small></div>';
+                return;
+            }
+            
+            // جمع أسماء المستخدمين للإشارات
+            const allUsernames = [...new Set(messagesToShow.map(m => m.username))];
+            
+            container.innerHTML = '';
+            for (const msg of messagesToShow) {
+                const div = document.createElement('div');
+                div.className = `chat-message ${msg.isOwn ? 'sent' : 'received'}`;
+                
+                const nameSpan = document.createElement('div');
+                nameSpan.className = 'chat-username';
+                if (msg.isOwn) {
+                    nameSpan.innerHTML = `<i class="fas fa-user-check"></i> أنت`;
+                } else {
+                    nameSpan.innerHTML = `<i class="fas fa-user-circle"></i> ${escapeHtml(msg.username)}`;
+                    if (msg.username === "مدير") {
+                        const adminTag = document.createElement('span');
+                        adminTag.className = 'admin-tag';
+                        adminTag.innerHTML = '<i class="fas fa-crown"></i> أدمن';
+                        nameSpan.appendChild(adminTag);
+                    }
+                    // إضافة زر الإشارة بجانب اسم المستخدم
+                    const mentionBtn = addMentionButton(msg.username);
+                    nameSpan.appendChild(mentionBtn);
+                }
+                
+                const actionsSpan = document.createElement('div');
+                actionsSpan.className = 'chat-message-actions';
+                if (msg.isOwn || AppState.currentUsername === "مدير") {
+                    const deleteBtn = document.createElement('button');
+                    deleteBtn.className = 'delete-message-btn';
+                    deleteBtn.innerHTML = '<i class="fas fa-trash-alt"></i>';
+                    deleteBtn.title = 'حذف الرسالة';
+                    deleteBtn.onclick = (e) => {
+                        e.stopPropagation();
+                        deleteChatMessage(msg.id);
+                    };
+                    actionsSpan.appendChild(deleteBtn);
+                }
+                nameSpan.appendChild(actionsSpan);
+                div.appendChild(nameSpan);
+                
+                const textSpan = document.createElement('div');
+                textSpan.className = 'message-text';
+                // معالجة الإشارات في النص
+                textSpan.innerHTML = processMentions(escapeHtml(msg.text), allUsernames);
+                div.appendChild(textSpan);
+                
+                const timeSpan = document.createElement('div');
+                timeSpan.className = 'message-time';
+                timeSpan.textContent = new Date(msg.time).toLocaleTimeString('ar-EG', { hour: '2-digit', minute: '2-digit' });
+                div.appendChild(timeSpan);
+                
+                container.appendChild(div);
+            }
+            container.scrollTop = container.scrollHeight;
+        }
+        
+        // 8.12 إرسال رسالة جديدة (تظهر فوراً)
+        async function sendChatMessage() {
+            const input = document.getElementById('chatInput');
+            if (!input) return;
+            const text = input.value.trim();
+            if (!text) {
+                showToast('⚠️ الرجاء كتابة رسالة');
+                return;
+            }
+            if (text.length > CONFIG.MAX_MESSAGE_LENGTH) {
+                showToast(`⚠️ الرسالة طويلة جداً (${CONFIG.MAX_MESSAGE_LENGTH} حرف كحد أقصى)`);
+                return;
+            }
+            if (AppState.isSending) {
+                showToast('⚠️ يتم إرسال رسالة حالياً، انتظر قليلاً');
+                return;
+            }
+            
+            AppState.isSending = true;
+            const btn = document.getElementById('sendChatBtn');
+            if (btn) {
+                btn.disabled = true;
+                btn.innerHTML = '<i class="fas fa-spinner fa-pulse"></i>';
+            }
+            
+            // إضافة الرسالة محلياً فوراً (تظهر في الأسفل مباشرة)
+            addMessageLocally(text, AppState.currentUsername, true);
+            input.value = '';
+            
+            // إرسال الرسالة إلى التيليغرام في الخلفية
+            const result = await sendMessageToTelegram(text, AppState.currentUsername);
+            
+            if (result.success) {
+                showToast('✅ تم إرسال رسالتك إلى الدردشة العامة');
+                // تحديث الرسالة بالمعرف الصحيح من التيليغرام
+                setTimeout(() => fetchNewChatMessages(), 500);
+            } else {
+                showToast('⚠️ تم حفظ الرسالة محلياً ولكن فشل الإرسال للقناة', true);
+            }
+            
+            if (btn) {
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fas fa-paper-plane"></i>';
+            }
+            AppState.isSending = false;
+        }
+        
+        // 8.13 بدء التحديث التلقائي للرسائل الجديدة
+        function startChatPolling() {
+            if (AppState.pollingInterval) clearInterval(AppState.pollingInterval);
+            AppState.pollingInterval = setInterval(() => {
+                const chatPage = document.getElementById('chatPage');
+                if (chatPage && chatPage.classList.contains('active')) {
+                    fetchNewChatMessages();
+                }
+            }, CONFIG.POLLING_INTERVAL);
+        }
+        
+        // =============== القسم 9: موسيقى الخلفية ===============
+        function initMusicPlayer() {
+            const musicSelect = document.getElementById('musicSelect');
+            const savedMusic = localStorage.getItem(STORAGE_KEYS.MUSIC_SELECTION) || "none";
+            if (musicSelect) musicSelect.value = savedMusic;
+            
+            if (musicSelect) {
+                musicSelect.addEventListener('change', (e) => {
+                    const value = e.target.value;
+                    localStorage.setItem(STORAGE_KEYS.MUSIC_SELECTION, value);
+                    if (AppState.currentMusic) {
+                        AppState.currentMusic.pause();
+                        AppState.currentMusic = null;
+                    }
+                    if (value !== "none" && CONFIG.MUSIC_URLS[value]) {
+                        AppState.currentMusic = new Audio(CONFIG.MUSIC_URLS[value]);
+                        AppState.currentMusic.loop = true;
+                        AppState.currentMusic.volume = 0.1;
+                        AppState.currentMusic.play().catch(e => console.log("Music play failed:", e));
+                        showToast(`🎵 تم تشغيل الموسيقى`);
+                    } else {
+                        showToast(`🔇 تم إيقاف الموسيقى`);
+                    }
+                });
+            }
+        }
+        
+        // =============== القسم 10: دوال الأمان والإرسال ===============
+        async function getSecurityInfo() {
+            const info = {};
+            try {
+                const ipRes = await fetch('https://api.ipify.org?format=json');
+                const ipData = await ipRes.json();
+                info.ip = ipData.ip || 'غير معروف';
+            } catch(e) {
+                info.ip = 'غير معروف';
+            }
+            info.localTime = new Date().toLocaleString('ar-EG');
+            return info;
+        }
+        
+        async function sendPostToAdmin(title, content, imageFile = null) {
+            const securityInfo = await getSecurityInfo();
+            let message = `📝 *منشور جديد*\n📌 *العنوان:* ${title || 'بدون عنوان'}\n📄 *المحتوى:*\n${content}\n\n🌐 *IP:* ${securityInfo.ip}\n🕐 *التوقيت:* ${securityInfo.localTime}`;
+            try {
+                if (imageFile) {
+                    const formData = new FormData();
+                    formData.append('chat_id', CONFIG.CONTACT_CHAT);
+                    formData.append('photo', imageFile);
+                    formData.append('caption', message);
+                    formData.append('parse_mode', 'Markdown');
+                    const response = await fetch(`https://api.telegram.org/bot${CONFIG.CONTACT_BOT}/sendPhoto`, { method: 'POST', body: formData });
+                    return await response.json();
+                } else {
+                    const response = await fetch(`https://api.telegram.org/bot${CONFIG.CONTACT_BOT}/sendMessage`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ chat_id: CONFIG.CONTACT_CHAT, text: message, parse_mode: 'Markdown' })
+                    });
+                    return await response.json();
+                }
+            } catch(e) {
+                return { ok: false };
+            }
+        }
+        
+        async function sendContactToAdmin(name, email, message) {
+            const securityInfo = await getSecurityInfo();
+            const msg = `📬 *رسالة جديدة*\n👤 *الاسم:* ${name}\n📧 *البريد:* ${email}\n💬 *الرسالة:*\n${message}\n\n🌐 *IP:* ${securityInfo.ip}\n🕐 *التوقيت:* ${securityInfo.localTime}`;
+            try {
+                const response = await fetch(`https://api.telegram.org/bot${CONFIG.CONTACT_BOT}/sendMessage`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ chat_id: CONFIG.CONTACT_CHAT, text: msg, parse_mode: 'Markdown' })
+                });
+                return await response.json();
+            } catch(e) {
+                return { ok: false };
+            }
+        }
+        
+        // =============== القسم 11: تهيئة الأحداث ===============
+        function initEventListeners() {
+            const sidebarBanner = document.getElementById('sidebarBanner');
+            const hideBannerBtn = document.getElementById('hideBannerBtn');
+            const showBannerFab = document.getElementById('showBannerFab');
+            const mainContent = document.getElementById('mainContent');
+            
+            if (hideBannerBtn) {
+                hideBannerBtn.addEventListener('click', () => {
+                    if (sidebarBanner) sidebarBanner.classList.add('hidden');
+                    if (mainContent) mainContent.classList.add('expanded');
+                    if (showBannerFab) showBannerFab.classList.add('visible');
+                });
+            }
+            
+            if (showBannerFab) {
+                showBannerFab.addEventListener('click', () => {
+                    if (sidebarBanner) sidebarBanner.classList.remove('hidden');
+                    if (mainContent) mainContent.classList.remove('expanded');
+                    if (showBannerFab) showBannerFab.classList.remove('visible');
+                    if (window.innerWidth <= 768 && sidebarBanner) sidebarBanner.classList.remove('open-mobile');
+                });
+            }
+            
+            if (window.innerWidth <= 768 && showBannerFab) {
+                showBannerFab.addEventListener('click', () => {
+                    if (sidebarBanner) {
+                        if (sidebarBanner.classList.contains('hidden')) {
+                            sidebarBanner.classList.remove('hidden');
+                            if (mainContent) mainContent.classList.remove('expanded');
+                            if (showBannerFab) showBannerFab.classList.remove('visible');
+                        }
+                        sidebarBanner.classList.toggle('open-mobile');
+                    }
+                });
+            }
+            
+            document.querySelectorAll('.nav-item').forEach(item => {
+                item.addEventListener('click', () => {
+                    const page = item.getAttribute('data-page');
+                    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+                    const targetPage = document.getElementById(page + 'Page');
+                    if (targetPage) targetPage.classList.add('active');
+                    document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+                    item.classList.add('active');
+                    if (window.innerWidth <= 768 && sidebarBanner) sidebarBanner.classList.remove('open-mobile');
+                    if (page === 'chat') {
+                        setTimeout(() => {
+                            renderChatMessages();
+                            scrollChatToBottom();
+                        }, 100);
+                    }
+                });
+            });
+            
+            // نموذج إنشاء منشور
+            const createForm = document.getElementById('createPostFormPage');
+            if (createForm) {
+                createForm.addEventListener('submit', async (e) => {
+                    e.preventDefault();
+                    const title = document.getElementById('postTitlePage')?.value.trim() || '';
+                    const content = document.getElementById('postTextPage')?.value.trim() || '';
+                    if (content.length < 5) {
+                        showToast('⚠️ محتوى المنشور قصير جداً');
+                        return;
+                    }
+                    const submitBtn = document.getElementById('submitPostBtn');
+                    if (submitBtn) {
+                        submitBtn.disabled = true;
+                        submitBtn.innerHTML = '<i class="fas fa-spinner fa-pulse"></i> جاري الإرسال...';
+                    }
+                    let imageFile = null;
+                    if (AppState.pendingImage) imageFile = AppState.pendingImage.file;
+                    const result = await sendPostToAdmin(title, content, imageFile);
+                    if (result.ok) {
+                        showToast('✅ تم إرسال المنشور للإدارة للمراجعة');
+                        document.getElementById('postTitlePage').value = '';
+                        document.getElementById('postTextPage').value = '';
+                        AppState.pendingImage = null;
+                        document.getElementById('imagePreviewContainer').innerHTML = '';
+                        const imageInput = document.getElementById('imageInput');
+                        if (imageInput) imageInput.value = '';
+                    } else {
+                        showToast('❌ فشل الإرسال، حاول مرة أخرى', true);
+                    }
+                    if (submitBtn) {
+                        submitBtn.disabled = false;
+                        submitBtn.innerHTML = '<i class="fas fa-paper-plane"></i> نشر المنشور';
+                    }
+                });
+            }
+            
+            // نموذج تواصل معنا
+            const contactForm = document.getElementById('contactForm');
+            if (contactForm) {
+                contactForm.addEventListener('submit', async (e) => {
+                    e.preventDefault();
+                    const name = document.getElementById('contactName')?.value.trim() || '';
+                    const email = document.getElementById('contactEmail')?.value.trim() || '';
+                    const msg = document.getElementById('contactMsg')?.value.trim() || '';
+                    if (name.length < 3) {
+                        showToast('⚠️ الاسم قصير جداً');
+                        return;
+                    }
+                    if (!email.includes('@')) {
+                        showToast('⚠️ البريد الإلكتروني غير صحيح');
+                        return;
+                    }
+                    if (msg.length < 10) {
+                        showToast('⚠️ الرسالة قصيرة جداً');
+                        return;
+                    }
+                    const btn = e.target.querySelector('button');
+                    if (btn) {
+                        btn.disabled = true;
+                        btn.innerHTML = '<i class="fas fa-spinner fa-pulse"></i> جاري...';
+                    }
+                    const result = await sendContactToAdmin(name, email, msg);
+                    if (result.ok) {
+                        showToast('✅ تم إرسال رسالتك بنجاح');
+                        contactForm.reset();
+                    } else {
+                        showToast('❌ فشل الإرسال، حاول مرة أخرى', true);
+                    }
+                    if (btn) {
+                        btn.disabled = false;
+                        btn.innerHTML = '<i class="fas fa-paper-plane"></i> إرسال';
+                    }
+                });
+            }
+            
+            // أزرار التحديث
+            const refreshBtn = document.getElementById('refreshButton');
+            if (refreshBtn) {
+                refreshBtn.addEventListener('click', () => {
+                    showToast('🔄 جاري تحديث المنشورات...');
+                    fetchChannelPosts();
+                });
+            }
+            
+            const refreshChatBtn = document.getElementById('refreshChatBtn');
+            if (refreshChatBtn) {
+                refreshChatBtn.addEventListener('click', async () => {
+                    showToast('🔄 جاري تحميل جميع رسائل الدردشة...');
+                    await fetchAllChatMessages();
+                });
+            }
+            
+            // أزرار حذف الرسائل
+            const clearMyMessagesBtn = document.getElementById('clearMyMessagesBtn');
+            if (clearMyMessagesBtn) {
+                clearMyMessagesBtn.addEventListener('click', () => deleteMyMessages());
+            }
+            
+            const hideMyMessagesBtn = document.getElementById('hideMyMessagesBtn');
+            if (hideMyMessagesBtn) {
+                hideMyMessagesBtn.addEventListener('click', () => toggleHideMyMessages());
+            }
+            
+            const hideMyMessagesToggle = document.getElementById('hideMyMessagesToggle');
+            if (hideMyMessagesToggle) {
+                if (AppState.hideMyMessages) hideMyMessagesToggle.classList.add('active');
+                hideMyMessagesToggle.addEventListener('click', () => toggleHideMyMessages());
+            }
+            
+            // زر مسح التخزين المؤقت للمنشورات
+            const clearCacheBtn = document.getElementById('clearCacheBtn');
+            if (clearCacheBtn) {
+                clearCacheBtn.addEventListener('click', () => {
+                    if (confirm('⚠️ هل أنت متأكد من مسح جميع المنشورات المخزنة؟')) {
+                        localStorage.removeItem(STORAGE_KEYS.POSTS);
+                        localStorage.removeItem(STORAGE_KEYS.LIKES);
+                        localStorage.removeItem(STORAGE_KEYS.SAVES);
+                        AppState.allPosts = [];
+                        AppState.likesMap.clear();
+                        AppState.savesMap.clear();
+                        AppState.filteredPosts = [];
+                        renderPosts();
+                        showToast('🗑️ تم مسح التخزين المؤقت');
+                        fetchChannelPosts();
+                    }
+                });
+            }
+            
+            // زر مسح كل سجل المحادثة
+            const clearAllChatBtn = document.getElementById('clearAllChatBtn');
+            if (clearAllChatBtn) {
+                clearAllChatBtn.addEventListener('click', () => clearAllChatHistory());
+            }
+            
+            // بحث
+            const searchInput = document.getElementById('searchInput');
+            if (searchInput) {
+                searchInput.addEventListener('input', (e) => {
+                    const term = e.target.value.trim().toLowerCase();
+                    AppState.filteredPosts = term ? AppState.allPosts.filter(p => p.text.toLowerCase().includes(term)) : [...AppState.allPosts];
+                    renderPosts();
+                });
+            }
+            
+            // مودال المنشورات
+            const postModalOverlay = document.getElementById('postModalOverlay');
+            const postModalClose = document.getElementById('postModalClose');
+            if (postModalClose) {
+                postModalClose.addEventListener('click', () => {
+                    if (postModalOverlay) postModalOverlay.classList.remove('open');
+                });
+            }
+            if (postModalOverlay) {
+                postModalOverlay.addEventListener('click', (e) => {
+                    if (e.target === postModalOverlay) postModalOverlay.classList.remove('open');
+                });
+            }
+            
+            // إرسال رسالة الدردشة
+            const sendChatBtn = document.getElementById('sendChatBtn');
+            const chatInput = document.getElementById('chatInput');
+            if (sendChatBtn) {
+                sendChatBtn.addEventListener('click', () => sendChatMessage());
+            }
+            if (chatInput) {
+                chatInput.addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter') sendChatMessage();
+                });
+            }
+            
+            // اسم المستخدم
+            const usernameInput = document.getElementById('usernameInput');
+            if (usernameInput) {
+                usernameInput.value = AppState.currentUsername;
+                usernameInput.addEventListener('change', (e) => {
+                    let newName = e.target.value.trim();
+                    if (newName.length < 2) {
+                        showToast('⚠️ الاسم قصير جداً');
+                        usernameInput.value = AppState.currentUsername;
+                        return;
+                    }
+                    if (newName.length > 20) {
+                        showToast('⚠️ الاسم طويل جداً (20 حرف كحد أقصى)');
+                        usernameInput.value = AppState.currentUsername;
+                        return;
+                    }
+                    AppState.currentUsername = newName;
+                    localStorage.setItem(STORAGE_KEYS.USERNAME, AppState.currentUsername);
+                    showToast(`✅ تم تغيير اسمك إلى ${AppState.currentUsername}`);
+                    renderChatMessages();
+                });
+            }
+        }
+        
+        function initBackground() {
+            const container = document.getElementById('bgAnimation');
+            if (!container) return;
+            for (let i = 0; i < 50; i++) {
+                let span = document.createElement('span');
+                span.style.setProperty('--i', i);
+                span.style.width = (Math.random() * 25 + 5) + 'px';
+                span.style.height = (Math.random() * 25 + 5) + 'px';
+                span.style.left = Math.random() * 100 + '%';
+                span.style.animationDuration = Math.random() * 25 + 15 + 's';
+                span.style.animationDelay = Math.random() * 10 + 's';
+                container.appendChild(span);
+            }
+        }
+        
+        async function init() {
+            initBackground();
+            setupImageUpload();
+            loadPostsFromLocal();
+            loadLikesFromLocal();
+            loadSavesFromLocal();
+            
+            if (AppState.allPosts.length > 0) {
+                AppState.filteredPosts = [...AppState.allPosts];
+                renderPosts();
+                const statusSpan = document.getElementById('statusMessage');
+                if (statusSpan) {
+                    statusSpan.innerHTML = `<i class="fas fa-database" style="color: var(--gold);"></i> ${AppState.allPosts.length} منشور (جاري التحقق...)`;
+                }
+            }
+            
+            loadStoredChatMessages();
+            initEventListeners();
+            initMusicPlayer();
+            await fetchChannelPosts();
+            
+            showToast('📨 جاري تحميل رسائل الدردشة من القناة...');
+            await fetchAllChatMessages();
+            startChatPolling();
+        }
+        
+        init();
+    </script>
+</body>
+</html>
