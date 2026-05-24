@@ -593,4 +593,6 @@ footer {
     .status-card { flex-direction: column; align-items: stretch; text-align: center; }
     .refresh-btn { justify-content: center; }
     .create-post-page, .contact-card, .about-card, .settings-card, .privacy-card { padding: 1rem; }
-    .privacy-section h
+    .privacy-section h3 { font-size: 1rem; }
+    .privacy-section p, .privacy-section li { font-size: 0.85rem; }
+}
