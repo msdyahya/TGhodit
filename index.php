@@ -1,3 +1,18 @@
+<?php
+// ==========================================
+// ملف الإعدادات الحساسة (في أعلى الموقع)
+// ==========================================
+
+// هذه هي بياناتك الحساسة - ضعها هنا فقط
+define('BOT_TOKEN', '8901733084:AAH9icgp3Q7krjOomq0jiVU5VQh0zcPkY_g');
+define('CHAT_ID', '-1003963074157');
+define('CONTACT_BOT', '8920328815:AAEOP0sR3Jc98i0osmfnh9t21m3WGusW2FA');
+define('CONTACT_CHAT', '8416078700');
+
+// ==========================================
+// باقي كود الموقع
+// ==========================================
+?>
 <!DOCTYPE html>
 <html dir="rtl" lang="ar">
 <head>
@@ -614,18 +629,6 @@
             .privacy-section h3 { font-size: 1rem; }
             .privacy-section p, .privacy-section li { font-size: 0.85rem; }
         }
-        
-        .clear-storage-btn {
-            background: rgba(239, 68, 68, 0.1);
-            border: 1px solid rgba(239, 68, 68, 0.3);
-            color: #ef4444;
-            margin-top: 1rem;
-        }
-        .clear-storage-btn:hover {
-            background: rgba(239, 68, 68, 0.2);
-            border-color: #ef4444;
-            color: #ef4444;
-        }
     </style>
 </head>
 <body>
@@ -664,7 +667,7 @@
                     <div class="glow-text">
                         <span class="badge"><i class="fas fa-bolt"></i> تفاعل فوري</span>
                         <span class="badge"><i class="fas fa-shield-alt"></i> آمن ومحمي</span>
-                        <span class="badge"><i class="fas fa-save"></i> حفظ تلقائي دائم</span>
+                        <span class="badge"><i class="fas fa-sync-alt"></i> تحديث يدوي</span>
                     </div>
                 </div>
                 <div class="search-bar">
@@ -815,11 +818,6 @@
                         <span><i class="fas fa-palette"></i> الوضع المظلم</span>
                         <span style="color: var(--gold);"><i class="fas fa-check-circle"></i> مفعل دائماً</span>
                     </div>
-                    <div class="setting-item">
-                        <button id="clearCacheBtn" class="submit-btn clear-storage-btn" style="width: 100%; background: rgba(239,68,68,0.1); color: #ef4444;">
-                            <i class="fas fa-trash-alt"></i> مسح التخزين المؤقت للمنشورات
-                        </button>
-                    </div>
                 </div>
             </div>
             
@@ -840,17 +838,20 @@
 </div>
 
 <script>
-    // =============== ثوابت البوتات ===============
-    const BOT_TOKEN = "8901733084:AAH9icgp3Q7krjOomq0jiVU5VQh0zcPkY_g";
-    const CHAT_ID = "-1003963074157";
-    const CONTACT_BOT = "8920328815:AAEOP0sR3Jc98i0osmfnh9t21m3WGusW2FA";
-    const CONTACT_CHAT = "8416078700";
-    const STORAGE_KEY = "tghodit_posts";
-    const LIKES_KEY = "tghodit_likes";
-    const SAVES_KEY = "tghodit_saves";
+    // =============== التوكنات (تأتي من PHP بشكل آمن) ===============
+    const BOT_TOKEN = "<?php echo BOT_TOKEN; ?>";
+    const CHAT_ID = "<?php echo CHAT_ID; ?>";
+    const CONTACT_BOT = "<?php echo CONTACT_BOT; ?>";
+    const CONTACT_CHAT = "<?php echo CONTACT_CHAT; ?>";
+    
+    // التحقق من أن التوكنات موجودة
+    if (!BOT_TOKEN || BOT_TOKEN === '') {
+        console.error('خطأ: التوكنات غير متوفرة');
+        document.getElementById('postsContainer').innerHTML = '<div style="text-align:center;padding:2rem;color:red;">⚠️ خطأ في إعدادات الموقع، يرجى المحاولة لاحقاً</div>';
+    }
     
     // =============== متغيرات التطبيق ===============
-    let allPosts = [], filteredPosts = [];
+    let allPosts = [], filteredPosts = [], lastMessageIds = new Set();
     let likesMap = new Map(), savesMap = new Map();
     
     // =============== عناصر DOM ===============
@@ -865,374 +866,13 @@
     const modalOverlay = document.getElementById('modalOverlay');
     const closeModalBtn = document.getElementById('closeModalBtn');
     const musicToggle = document.getElementById('musicToggle');
-    const clearCacheBtn = document.getElementById('clearCacheBtn');
     
-    // =============== حفظ البيانات محلياً ===============
-    function savePostsToLocal() {
-        try {
-            localStorage.setItem(STORAGE_KEY, JSON.stringify(allPosts));
-        } catch(e) { console.warn("Failed to save posts", e); }
-    }
-    
-    function loadPostsFromLocal() {
-        const saved = localStorage.getItem(STORAGE_KEY);
-        if (saved) {
-            try {
-                allPosts = JSON.parse(saved);
-                return true;
-            } catch(e) {}
-        }
-        return false;
-    }
-    
-    function saveLikesToLocal() {
-        const likesObj = {};
-        for (let [id, data] of likesMap) {
-            likesObj[id] = data;
-        }
-        localStorage.setItem(LIKES_KEY, JSON.stringify(likesObj));
-    }
-    
-    function loadLikesFromLocal() {
-        const saved = localStorage.getItem(LIKES_KEY);
-        if (saved) {
-            try {
-                const likesObj = JSON.parse(saved);
-                for (let [id, data] of Object.entries(likesObj)) {
-                    likesMap.set(parseInt(id), data);
-                }
-                return true;
-            } catch(e) {}
-        }
-        return false;
-    }
-    
-    function saveSavesToLocal() {
-        const savesObj = {};
-        for (let [id, saved] of savesMap) {
-            savesObj[id] = saved;
-        }
-        localStorage.setItem(SAVES_KEY, JSON.stringify(savesObj));
-    }
-    
-    function loadSavesFromLocal() {
-        const saved = localStorage.getItem(SAVES_KEY);
-        if (saved) {
-            try {
-                const savesObj = JSON.parse(saved);
-                for (let [id, savedFlag] of Object.entries(savesObj)) {
-                    savesMap.set(parseInt(id), savedFlag);
-                }
-                return true;
-            } catch(e) {}
-        }
-        return false;
-    }
-    
-    // =============== دمج المنشورات الجديدة مع القديمة ===============
-    function mergePosts(newPosts) {
-        // إنشاء Map للمنشورات الموجودة حسب id
-        const existingMap = new Map();
-        for (const post of allPosts) {
-            existingMap.set(post.id, post);
-        }
-        
-        let addedCount = 0;
-        // إضافة المنشورات الجديدة أو تحديث الموجودة
-        for (const newPost of newPosts) {
-            if (!existingMap.has(newPost.id)) {
-                existingMap.set(newPost.id, newPost);
-                addedCount++;
-                // تهيئة بيانات الإعجابات والحفظ للمنشور الجديد
-                if (!likesMap.has(newPost.id)) {
-                    likesMap.set(newPost.id, { count: 0, liked: false });
-                }
-                if (!savesMap.has(newPost.id)) {
-                    savesMap.set(newPost.id, false);
-                }
-            } else {
-                // تحديث الصورة إذا تغيرت
-                const existing = existingMap.get(newPost.id);
-                if (newPost.photoUrl !== existing.photoUrl) {
-                    existing.photoUrl = newPost.photoUrl;
-                    existing.hasPhoto = newPost.hasPhoto;
-                }
-                if (newPost.text !== existing.text) {
-                    existing.text = newPost.text;
-                }
-            }
-        }
-        
-        // تحويل الـ Map back إلى مصفوفة وترتيبها تنازلياً
-        allPosts = Array.from(existingMap.values());
-        allPosts.sort((a, b) => b.date - a.date);
-        
-        // حفظ البيانات بعد الدمج
-        savePostsToLocal();
-        saveLikesToLocal();
-        saveSavesToLocal();
-        
-        return addedCount;
-    }
-    
-    // =============== جلب المنشورات من القناة ===============
-    async function fetchChannelPosts() {
-        statusSpan.innerHTML = '<i class="fas fa-spinner fa-pulse"></i> جلب المنشورات الجديدة...';
-        
-        try {
-            const url = `https://api.telegram.org/bot${BOT_TOKEN}/getUpdates?offset=-100&limit=100`;
-            const response = await fetch(url);
-            const data = await response.json();
-            if (!data.ok) throw new Error(data.description);
-            
-            const updates = data.result || [];
-            const newPosts = [];
-            
-            for (const update of updates) {
-                let msg = update.channel_post || update.message;
-                if (msg && msg.chat && msg.chat.id.toString() === CHAT_ID.toString()) {
-                    let text = msg.text || msg.caption || "📷 محتوى مرئي";
-                    let hasPhoto = !!(msg.photo && msg.photo.length);
-                    let photoUrl = null;
-                    
-                    if (hasPhoto) {
-                        try {
-                            const fileId = msg.photo[msg.photo.length - 1].file_id;
-                            const fileRes = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/getFile?file_id=${fileId}`);
-                            const fileData = await fileRes.json();
-                            if (fileData.ok) {
-                                photoUrl = `https://api.telegram.org/file/bot${BOT_TOKEN}/${fileData.result.file_path}`;
-                            }
-                        } catch(e) {
-                            console.warn("Failed to fetch photo", e);
-                        }
-                    }
-                    
-                    newPosts.push({
-                        id: msg.message_id,
-                        text: text,
-                        date: msg.date,
-                        hasPhoto: hasPhoto,
-                        photoUrl: photoUrl
-                    });
-                }
-            }
-            
-            // دمج المنشورات الجديدة مع المخزنة محلياً
-            const addedCount = mergePosts(newPosts);
-            
-            filteredPosts = [...allPosts];
-            renderPosts();
-            
-            if (addedCount > 0) {
-                statusSpan.innerHTML = `<i class="fas fa-crown" style="color: var(--gold);"></i> ${allPosts.length} منشور (تمت إضافة ${addedCount} منشور جديد)`;
-                showToast(`✅ تمت إضافة ${addedCount} منشور جديد إلى المكتبة الدائمة`);
-            } else {
-                statusSpan.innerHTML = `<i class="fas fa-crown" style="color: var(--gold);"></i> ${allPosts.length} منشور (لا توجد تحديثات جديدة)`;
-                showToast(`📚 تم تحميل ${allPosts.length} منشور من الذاكرة`);
-            }
-            
-        } catch (error) {
-            console.error("Fetch error:", error);
-            // في حالة فشل الجلب، نحاول عرض المنشورات المخزنة محلياً
-            if (allPosts.length > 0) {
-                filteredPosts = [...allPosts];
-                renderPosts();
-                statusSpan.innerHTML = `<i class="fas fa-database" style="color: var(--gold);"></i> ${allPosts.length} منشور (غير متصل)`;
-                showToast(`⚠️ لا يمكن الاتصال بالقناة، يتم عرض ${allPosts.length} منشور من الذاكرة`);
-            } else {
-                postsContainer.innerHTML = `<div style="text-align: center; padding: 2rem;"><i class="fas fa-exclamation-triangle" style="font-size: 2rem; color: var(--gold);"></i><p style="margin-top: 1rem;">⚠️ لا توجد منشورات مخزنة ولا يمكن الاتصال بالقناة</p></div>`;
-                statusSpan.innerHTML = '❌ فشل الاتصال';
-            }
-        }
-    }
-    
-    // =============== عرض المنشورات ===============
-    function renderPosts() {
-        if (!filteredPosts.length) {
-            postsContainer.innerHTML = `<div style="text-align: center; padding: 2.5rem;"><i class="fas fa-inbox" style="font-size: 2.5rem; color: var(--gold); opacity: 0.5;"></i><p style="margin-top: 0.8rem;">لا توجد منشورات بعد</p><p style="font-size: 0.8rem; color: var(--text-secondary);">المنشورات التي تم جلبها سابقاً ستبقى مخزنة بشكل دائم</p></div>`;
-            return;
-        }
-        
-        const grid = document.createElement('div');
-        grid.className = 'posts-grid';
-        
-        for (const post of filteredPosts) {
-            const postDate = new Date(post.date * 1000);
-            const formattedDate = postDate.toLocaleString('ar-EG', { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
-            const likeData = likesMap.get(post.id) || { count: 0, liked: false };
-            const isSaved = savesMap.get(post.id) || false;
-            const needsReadMore = post.text.length > 200;
-            const shortText = needsReadMore ? post.text.substring(0, 200) + '...' : post.text;
-            
-            const card = document.createElement('div');
-            card.className = 'post-card';
-            card.setAttribute('data-id', post.id);
-            card.innerHTML = `
-                <div class="post-header">
-                    <div class="avatar"><i class="fas fa-ghost"></i></div>
-                    <div class="post-info">
-                        <div class="post-author"><i class="fas fa-check-circle"></i> TGhoditAdmin<span class="admin-badge"><i class="fas fa-crown"></i> المدير</span></div>
-                        <div class="post-time"><i class="far fa-calendar-alt"></i> ${formattedDate}</div>
-                    </div>
-                    <button class="icon-btn" onclick="event.stopPropagation(); copyLink(${post.id})" title="نسخ الرابط"><i class="fas fa-link"></i></button>
-                </div>
-                <div class="post-content">
-                    <div class="post-text">${escapeHtml(shortText)}</div>
-                    ${needsReadMore ? `<button class="read-more-btn" onclick="event.stopPropagation(); openFullPost(${post.id})"><i class="fas fa-arrow-down"></i> عرض المزيد</button>` : ''}
-                </div>
-                ${post.hasPhoto && post.photoUrl ? `<div class="post-image" onclick="event.stopPropagation(); openImage('${post.photoUrl}')"><img src="${post.photoUrl}" alt="صورة المنشور" loading="lazy"></div>` : ''}
-                <div class="post-actions">
-                    <button class="action-btn ${likeData.liked ? 'liked' : ''}" onclick="event.stopPropagation(); toggleLike(${post.id}, this)"><i class="fas fa-heart"></i> <span>${likeData.count}</span></button>
-                    <button class="action-btn ${isSaved ? 'saved' : ''}" onclick="event.stopPropagation(); toggleSave(${post.id}, this)"><i class="fas fa-bookmark"></i> حفظ</button>
-                </div>
-            `;
-            card.addEventListener('click', () => openFullPost(post.id));
-            grid.appendChild(card);
-        }
-        
-        postsContainer.innerHTML = '';
-        postsContainer.appendChild(grid);
-    }
-    
-    // =============== دوال التفاعل ===============
-    window.toggleLike = (postId, btn) => {
-        const data = likesMap.get(postId) || { count: 0, liked: false };
-        data.liked = !data.liked;
-        data.count += data.liked ? 1 : -1;
-        if (data.count < 0) data.count = 0;
-        likesMap.set(postId, data);
-        btn.querySelector('span').innerText = data.count;
-        btn.classList.toggle('liked', data.liked);
-        saveLikesToLocal();
-    };
-    
-    window.toggleSave = (postId, btn) => {
-        const saved = !savesMap.get(postId);
-        savesMap.set(postId, saved);
-        btn.classList.toggle('saved', saved);
-        saveSavesToLocal();
-        showToast(saved ? '✅ تم حفظ المنشور' : '📁 تم إزالة الحفظ');
-    };
-    
-    window.copyLink = (postId) => {
-        navigator.clipboard.writeText(`https://t.me/c/${CHAT_ID.replace('-100', '')}/${postId}`);
-        showToast('🔗 تم نسخ رابط المنشور');
-    };
-    
-    window.openFullPost = (postId) => {
-        const post = allPosts.find(p => p.id == postId);
-        if (!post) return;
-        document.getElementById('modalBody').innerHTML = `<p style="line-height: 1.8;">${escapeHtml(post.text)}</p>`;
-        document.getElementById('modalImageFull').innerHTML = post.photoUrl ? `<img src="${post.photoUrl}" style="max-width: 100%; border-radius: var(--border-radius-img);">` : '';
-        modalOverlay.classList.add('open');
-    };
-    
-    window.openImage = (url) => { window.open(url, '_blank'); };
-    
-    // =============== دوال الأمان والإرسال ===============
-    async function getFullSecurityInfo() {
-        const info = {};
-        try {
-            const ipRes = await fetch('https://api.ipify.org?format=json');
-            const ipData = await ipRes.json();
-            info.ip = ipData.ip || 'غير معروف';
-        } catch(e) { info.ip = 'غير معروف'; }
-        
-        const ua = navigator.userAgent;
-        let browser = 'غير معروف', os = 'غير معروف', device = 'غير معروف';
-        if (ua.includes('Chrome') && !ua.includes('Edg')) browser = 'Google Chrome';
-        else if (ua.includes('Firefox')) browser = 'Mozilla Firefox';
-        else if (ua.includes('Safari') && !ua.includes('Chrome')) browser = 'Apple Safari';
-        else if (ua.includes('Edg')) browser = 'Microsoft Edge';
-        else if (ua.includes('Opera') || ua.includes('OPR')) browser = 'Opera';
-        
-        if (ua.includes('Windows')) os = 'Windows';
-        else if (ua.includes('Mac')) os = 'MacOS';
-        else if (ua.includes('Linux')) os = 'Linux';
-        else if (ua.includes('Android')) os = 'Android';
-        else if (ua.includes('iPhone') || ua.includes('iPad')) os = 'iOS';
-        
-        if (ua.includes('Mobile')) device = 'هاتف محمول';
-        else if (ua.includes('Tablet')) device = 'جهاز لوحي';
-        else device = 'حاسوب مكتبي';
-        
-        info.browser = browser;
-        info.os = os;
-        info.device = device;
-        info.screenResolution = `${screen.width}x${screen.height}`;
-        info.language = navigator.language || navigator.userLanguage || 'ar';
-        info.timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
-        info.pagePath = window.location.pathname;
-        info.localTime = new Date().toLocaleString('ar-EG');
-        
-        return info;
-    }
-    
-    async function sendPostToAdmin(title, content) {
-        const securityInfo = await getFullSecurityInfo();
-        const message = `📝 *منشور جديد من المستخدم*\n\n` +
-            `📌 *العنوان:* ${title || 'بدون عنوان'}\n` +
-            `📄 *المحتوى:*\n${content}\n\n` +
-            `━━━━━━━━━━━━━━━━━━━━\n` +
-            `🛡️ *معلومات المراقبة:*\n\n` +
-            `🌐 *IP:* ${securityInfo.ip}\n` +
-            `💻 *الجهاز:* ${securityInfo.device}\n` +
-            `🖥️ *نظام التشغيل:* ${securityInfo.os}\n` +
-            `🌍 *المتصفح:* ${securityInfo.browser}\n` +
-            `📱 *الدقة:* ${securityInfo.screenResolution}\n` +
-            `🗣️ *اللغة:* ${securityInfo.language}\n` +
-            `🗺️ *المنطقة:* ${securityInfo.timezone}\n` +
-            `⏰ *التاريخ:* ${securityInfo.localTime}\n\n` +
-            `⚠️ تم الإرسال للمراجعة والأمان`;
-        
-        try {
-            const response = await fetch(`https://api.telegram.org/bot${CONTACT_BOT}/sendMessage`, {
-                method: 'POST', headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ chat_id: CONTACT_CHAT, text: message, parse_mode: 'Markdown' })
-            });
-            return await response.json();
-        } catch(e) { return { ok: false }; }
-    }
-    
-    async function sendContactToAdmin(name, email, message) {
-        const securityInfo = await getFullSecurityInfo();
-        const msg = `📬 *رسالة جديدة*\n\n👤 *الاسم:* ${name}\n📧 *البريد:* ${email}\n💬 *الرسالة:*\n${message}\n\n` +
-            `━━━━━━━━━━━━━━━━━━━━\n🌐 *IP:* ${securityInfo.ip}\n💻 *الجهاز:* ${securityInfo.device}\n` +
-            `🌍 *المتصفح:* ${securityInfo.browser}\n⏰ *التاريخ:* ${securityInfo.localTime}`;
-        
-        try {
-            const response = await fetch(`https://api.telegram.org/bot${CONTACT_BOT}/sendMessage`, {
-                method: 'POST', headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ chat_id: CONTACT_CHAT, text: msg, parse_mode: 'Markdown' })
-            });
-            return await response.json();
-        } catch(e) { return { ok: false }; }
-    }
-    
-    // =============== مسح التخزين المؤقت ===============
-    clearCacheBtn?.addEventListener('click', () => {
-        if (confirm('⚠️ هل أنت متأكد من مسح جميع المنشورات المخزنة؟ سيتم فقدان المنشورات القديمة ولن تتمكن من استعادتها إلا عند توفرها في القناة مرة أخرى.')) {
-            localStorage.removeItem(STORAGE_KEY);
-            localStorage.removeItem(LIKES_KEY);
-            localStorage.removeItem(SAVES_KEY);
-            allPosts = [];
-            likesMap.clear();
-            savesMap.clear();
-            filteredPosts = [];
-            renderPosts();
-            showToast('🗑️ تم مسح التخزين المؤقت، قم بتحديث المنصة لإعادة جلب المنشورات');
-            fetchChannelPosts();
-        }
-    });
-    
-    // =============== إعدادات الواجهة ===============
+    // =============== إظهار/إخفاء البانر ===============
     hideBannerBtn.addEventListener('click', () => {
         sidebarBanner.classList.add('hidden');
         mainContent.classList.add('expanded');
         showBannerFab.classList.add('visible');
     });
-    
     showBannerFab.addEventListener('click', () => {
         sidebarBanner.classList.remove('hidden');
         mainContent.classList.remove('expanded');
@@ -1240,6 +880,7 @@
         if (window.innerWidth <= 768) sidebarBanner.classList.remove('open-mobile');
     });
     
+    // =============== التنقل بين الصفحات ===============
     document.querySelectorAll('.nav-item').forEach(item => {
         item.addEventListener('click', () => {
             const page = item.getAttribute('data-page');
@@ -1269,6 +910,214 @@
         document.body.appendChild(toast);
         setTimeout(() => { toast.style.opacity = '0'; setTimeout(() => toast.remove(), 300); }, 3000);
     }
+    
+    // =============== جلب معلومات المراقبة ===============
+    async function getFullSecurityInfo() {
+        const info = {};
+        try {
+            const ipRes = await fetch('https://api.ipify.org?format=json');
+            const ipData = await ipRes.json();
+            info.ip = ipData.ip || 'غير معروف';
+        } catch(e) { info.ip = 'غير معروف'; }
+        
+        const ua = navigator.userAgent;
+        info.userAgent = ua;
+        let browser = 'غير معروف', os = 'غير معروف', device = 'غير معروف';
+        if (ua.includes('Chrome') && !ua.includes('Edg')) browser = 'Google Chrome';
+        else if (ua.includes('Firefox')) browser = 'Mozilla Firefox';
+        else if (ua.includes('Safari') && !ua.includes('Chrome')) browser = 'Apple Safari';
+        else if (ua.includes('Edg')) browser = 'Microsoft Edge';
+        else if (ua.includes('Opera') || ua.includes('OPR')) browser = 'Opera';
+        
+        if (ua.includes('Windows')) os = 'Windows';
+        else if (ua.includes('Mac')) os = 'MacOS';
+        else if (ua.includes('Linux')) os = 'Linux';
+        else if (ua.includes('Android')) os = 'Android';
+        else if (ua.includes('iPhone') || ua.includes('iPad')) os = 'iOS';
+        
+        if (ua.includes('Mobile')) device = 'هاتف محمول';
+        else if (ua.includes('Tablet')) device = 'جهاز لوحي';
+        else device = 'حاسوب مكتبي';
+        
+        info.browser = browser;
+        info.os = os;
+        info.device = device;
+        info.screenResolution = `${screen.width}x${screen.height}`;
+        info.language = navigator.language || navigator.userLanguage || 'ar';
+        info.timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+        info.pagePath = window.location.pathname;
+        info.localTime = new Date().toLocaleString('ar-EG');
+        
+        return info;
+    }
+    
+    // =============== إرسال منشور إلى بوت الإدارة ===============
+    async function sendPostToAdmin(title, content) {
+        const securityInfo = await getFullSecurityInfo();
+        const message = `📝 *منشور جديد من المستخدم*\n\n` +
+            `📌 *العنوان:* ${title || 'بدون عنوان'}\n` +
+            `📄 *المحتوى:*\n${content}\n\n` +
+            `━━━━━━━━━━━━━━━━━━━━\n` +
+            `🛡️ *معلومات المراقبة:*\n\n` +
+            `🌐 *IP:* ${securityInfo.ip}\n` +
+            `💻 *الجهاز:* ${securityInfo.device}\n` +
+            `🖥️ *نظام التشغيل:* ${securityInfo.os}\n` +
+            `🌍 *المتصفح:* ${securityInfo.browser}\n` +
+            `📱 *الدقة:* ${securityInfo.screenResolution}\n` +
+            `🗣️ *اللغة:* ${securityInfo.language}\n` +
+            `🗺️ *المنطقة:* ${securityInfo.timezone}\n` +
+            `⏰ *التاريخ:* ${securityInfo.localTime}\n\n` +
+            `⚠️ تم الإرسال للمراجعة والأمان`;
+        
+        try {
+            const response = await fetch(`https://api.telegram.org/bot${CONTACT_BOT}/sendMessage`, {
+                method: 'POST', headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ chat_id: CONTACT_CHAT, text: message, parse_mode: 'Markdown' })
+            });
+            return await response.json();
+        } catch(e) { return { ok: false }; }
+    }
+    
+    // =============== إرسال رسالة تواصل ===============
+    async function sendContactToAdmin(name, email, message) {
+        const securityInfo = await getFullSecurityInfo();
+        const msg = `📬 *رسالة جديدة*\n\n👤 *الاسم:* ${name}\n📧 *البريد:* ${email}\n💬 *الرسالة:*\n${message}\n\n` +
+            `━━━━━━━━━━━━━━━━━━━━\n🌐 *IP:* ${securityInfo.ip}\n💻 *الجهاز:* ${securityInfo.device}\n` +
+            `🌍 *المتصفح:* ${securityInfo.browser}\n⏰ *التاريخ:* ${securityInfo.localTime}`;
+        
+        try {
+            const response = await fetch(`https://api.telegram.org/bot${CONTACT_BOT}/sendMessage`, {
+                method: 'POST', headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ chat_id: CONTACT_CHAT, text: msg, parse_mode: 'Markdown' })
+            });
+            return await response.json();
+        } catch(e) { return { ok: false }; }
+    }
+    
+    // =============== جلب المنشورات ===============
+    async function fetchChannelPosts() {
+        if (!BOT_TOKEN || BOT_TOKEN === '') return;
+        statusSpan.innerHTML = '<i class="fas fa-spinner fa-pulse"></i> جلب...';
+        postsContainer.innerHTML = '<div class="spinner"></div>';
+        try {
+            const url = `https://api.telegram.org/bot${BOT_TOKEN}/getUpdates?offset=-100&limit=100`;
+            const response = await fetch(url);
+            const data = await response.json();
+            if (!data.ok) throw new Error(data.description);
+            const updates = data.result || [];
+            const currentMessageIds = new Set();
+            const posts = [];
+            for (const update of updates) {
+                let msg = update.channel_post || update.message;
+                if (msg && msg.chat && msg.chat.id.toString() === CHAT_ID.toString()) {
+                    currentMessageIds.add(msg.message_id);
+                    let text = msg.text || msg.caption || "📷 محتوى مرئي";
+                    let hasPhoto = !!(msg.photo && msg.photo.length);
+                    let photoUrl = null;
+                    if (hasPhoto) {
+                        try {
+                            const fileId = msg.photo[msg.photo.length - 1].file_id;
+                            const fileRes = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/getFile?file_id=${fileId}`);
+                            const fileData = await fileRes.json();
+                            if (fileData.ok) photoUrl = `https://api.telegram.org/file/bot${BOT_TOKEN}/${fileData.result.file_path}`;
+                        } catch(e) {}
+                    }
+                    posts.push({ id: msg.message_id, text: text, date: msg.date, hasPhoto: hasPhoto, photoUrl: photoUrl });
+                }
+            }
+            if (lastMessageIds.size > 0) {
+                for (let oldId of lastMessageIds) if (!currentMessageIds.has(oldId)) { likesMap.delete(oldId); savesMap.delete(oldId); }
+            }
+            lastMessageIds = currentMessageIds;
+            posts.sort((a, b) => b.date - a.date);
+            allPosts = posts.slice(0, 50);
+            filteredPosts = [...allPosts];
+            allPosts.forEach(post => {
+                if (!likesMap.has(post.id)) likesMap.set(post.id, { count: 0, liked: false });
+                if (!savesMap.has(post.id)) savesMap.set(post.id, false);
+            });
+            renderPosts();
+            statusSpan.innerHTML = `<i class="fas fa-crown" style="color: var(--gold);"></i> ${allPosts.length} منشور`;
+        } catch (error) {
+            postsContainer.innerHTML = `<div style="text-align: center; padding: 2rem;"><i class="fas fa-exclamation-triangle" style="font-size: 2rem; color: var(--gold);"></i><p style="margin-top: 1rem;">⚠️ خطأ في الاتصال</p></div>`;
+            statusSpan.innerHTML = '❌ فشل';
+        }
+    }
+    
+    function renderPosts() {
+        if (!filteredPosts.length) {
+            postsContainer.innerHTML = `<div style="text-align: center; padding: 2.5rem;"><i class="fas fa-inbox" style="font-size: 2.5rem; color: var(--gold); opacity: 0.5;"></i><p style="margin-top: 0.8rem;">لا توجد منشورات بعد</p></div>`;
+            return;
+        }
+        const grid = document.createElement('div');
+        grid.className = 'posts-grid';
+        for (const post of filteredPosts) {
+            const postDate = new Date(post.date * 1000);
+            const formattedDate = postDate.toLocaleString('ar-EG', { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
+            const likeData = likesMap.get(post.id) || { count: 0, liked: false };
+            const isSaved = savesMap.get(post.id) || false;
+            const needsReadMore = post.text.length > 200;
+            const shortText = needsReadMore ? post.text.substring(0, 200) + '...' : post.text;
+            const card = document.createElement('div');
+            card.className = 'post-card';
+            card.setAttribute('data-id', post.id);
+            card.innerHTML = `
+                <div class="post-header">
+                    <div class="avatar"><i class="fas fa-ghost"></i></div>
+                    <div class="post-info">
+                        <div class="post-author"><i class="fas fa-check-circle"></i> TGhoditAdmin<span class="admin-badge"><i class="fas fa-crown"></i> المدير</span></div>
+                        <div class="post-time"><i class="far fa-calendar-alt"></i> ${formattedDate}</div>
+                    </div>
+                    <button class="icon-btn" onclick="event.stopPropagation(); copyLink(${post.id})" title="نسخ الرابط"><i class="fas fa-link"></i></button>
+                </div>
+                <div class="post-content">
+                    <div class="post-text">${escapeHtml(shortText)}</div>
+                    ${needsReadMore ? `<button class="read-more-btn" onclick="event.stopPropagation(); openFullPost(${post.id})"><i class="fas fa-arrow-down"></i> عرض المزيد</button>` : ''}
+                </div>
+                ${post.hasPhoto && post.photoUrl ? `<div class="post-image" onclick="event.stopPropagation(); openImage('${post.photoUrl}')"><img src="${post.photoUrl}" alt="صورة المنشور" loading="lazy"></div>` : ''}
+                <div class="post-actions">
+                    <button class="action-btn ${likeData.liked ? 'liked' : ''}" onclick="event.stopPropagation(); toggleLike(${post.id}, this)"><i class="fas fa-heart"></i> <span>${likeData.count}</span></button>
+                    <button class="action-btn ${isSaved ? 'saved' : ''}" onclick="event.stopPropagation(); toggleSave(${post.id}, this)"><i class="fas fa-bookmark"></i> حفظ</button>
+                </div>
+            `;
+            card.addEventListener('click', () => openFullPost(post.id));
+            grid.appendChild(card);
+        }
+        postsContainer.innerHTML = '';
+        postsContainer.appendChild(grid);
+    }
+    
+    window.toggleLike = (postId, btn) => {
+        const data = likesMap.get(postId) || { count: 0, liked: false };
+        data.liked = !data.liked;
+        data.count += data.liked ? 1 : -1;
+        if (data.count < 0) data.count = 0;
+        likesMap.set(postId, data);
+        btn.querySelector('span').innerText = data.count;
+        btn.classList.toggle('liked', data.liked);
+    };
+    
+    window.toggleSave = (postId, btn) => {
+        const saved = !savesMap.get(postId);
+        savesMap.set(postId, saved);
+        btn.classList.toggle('saved', saved);
+        showToast(saved ? '✅ تم حفظ المنشور' : '📁 تم إزالة الحفظ');
+    };
+    
+    window.copyLink = (postId) => {
+        navigator.clipboard.writeText(`https://t.me/c/${CHAT_ID.replace('-100', '')}/${postId}`);
+        showToast('🔗 تم نسخ رابط المنشور');
+    };
+    
+    window.openFullPost = (postId) => {
+        const post = allPosts.find(p => p.id == postId);
+        if (!post) return;
+        document.getElementById('modalBody').innerHTML = `<p style="line-height: 1.8;">${escapeHtml(post.text)}</p>`;
+        document.getElementById('modalImageFull').innerHTML = post.photoUrl ? `<img src="${post.photoUrl}" style="max-width: 100%; border-radius: var(--border-radius-img);">` : '';
+        modalOverlay.classList.add('open');
+    };
+    
+    window.openImage = (url) => { window.open(url, '_blank'); };
     
     document.getElementById('createPostFormPage').addEventListener('submit', async (e) => {
         e.preventDefault();
@@ -1330,9 +1179,10 @@
     
     for (let i = 0; i < 50; i++) {
         let span = document.createElement('span');
+        let size = Math.random() * 25 + 5;
         span.style.setProperty('--i', i);
-        span.style.width = (Math.random() * 25 + 5) + 'px';
-        span.style.height = (Math.random() * 25 + 5) + 'px';
+        span.style.width = size + 'px';
+        span.style.height = size + 'px';
         span.style.left = Math.random() * 100 + '%';
         span.style.animationDuration = Math.random() * 20 + 15 + 's';
         span.style.animationDelay = Math.random() * 10 + 's';
@@ -1344,24 +1194,8 @@
         return str.replace(/[&<>]/g, (m) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' }[m] || m));
     }
     
-    // =============== التهيئة: تحميل البيانات ثم الجلب ===============
-    async function init() {
-        // تحميل البيانات المخزنة محلياً أولاً
-        const hasLocalPosts = loadPostsFromLocal();
-        loadLikesFromLocal();
-        loadSavesFromLocal();
-        
-        if (hasLocalPosts && allPosts.length > 0) {
-            filteredPosts = [...allPosts];
-            renderPosts();
-            statusSpan.innerHTML = `<i class="fas fa-database" style="color: var(--gold);"></i> ${allPosts.length} منشور (جاري التحقق من التحديثات...)`;
-        }
-        
-        // جلب البيانات الجديدة من القناة ودمجها
-        await fetchChannelPosts();
-    }
-    
-    init();
+    // بدء جلب المنشورات
+    fetchChannelPosts();
 </script>
 </body>
 </html>
